@@ -37,10 +37,10 @@ export function PeopleSentiment({ people }: PeopleSentimentProps) {
   };
 
   return (
-    <div className="bg-[#242424] rounded-2xl border border-[#3D3D3D] shadow-lg shadow-black/20 p-5 space-y-4">
+    <div className="bg-[#242424] rounded-none border border-[#3D3D3D] p-5 space-y-4">
       <div className="flex items-center justify-between border-b border-[#3D3D3D] pb-3">
         <div className="flex items-center gap-2.5">
-          <div className="h-7 w-7 rounded-lg bg-[#D95B28]/20 text-[#EC7D42] border border-[#D95B28]/40 flex items-center justify-center font-bold text-xs">
+          <div className="h-7 w-7 rounded-none bg-[#D95B28]/20 text-[#EC7D42] border border-[#D95B28]/40 flex items-center justify-center font-bold text-xs">
             <Users className="h-3.5 w-3.5" />
           </div>
           <div>
@@ -50,8 +50,8 @@ export function PeopleSentiment({ people }: PeopleSentimentProps) {
         </div>
 
         {neutralCount > 0 && (
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#F43F5E]/15 border border-[#F43F5E]/40 text-[#fda4af] text-xs font-bold">
-            <span className="w-2 h-2 rounded-full bg-[#F43F5E] animate-pulse" />
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-none bg-[#F43F5E]/15 border border-[#F43F5E]/40 text-[#fda4af] text-xs font-bold">
+            <span className="w-2 h-2 rounded-none bg-[#F43F5E] animate-pulse" />
             <span>{neutralCount} Neutral (Risk)</span>
           </div>
         )}
@@ -59,13 +59,13 @@ export function PeopleSentiment({ people }: PeopleSentimentProps) {
 
       {/* Summary Chips */}
       <div className="flex items-center gap-2 text-xs">
-        <span className="px-2.5 py-0.5 rounded-md bg-[#3A7A65]/20 text-[#5eead4] border border-[#3A7A65]/40 font-semibold">
+        <span className="px-2.5 py-0.5 rounded-none bg-[#3A7A65]/20 text-[#5eead4] border border-[#3A7A65]/40 font-semibold">
           {allyCount} Allies
         </span>
-        <span className="px-2.5 py-0.5 rounded-md bg-[#3E6F9E]/20 text-[#7dd3fc] border border-[#3E6F9E]/40 font-semibold">
+        <span className="px-2.5 py-0.5 rounded-none bg-[#3E6F9E]/20 text-[#7dd3fc] border border-[#3E6F9E]/40 font-semibold">
           {warmCount} Warm
         </span>
-        <span className="px-2.5 py-0.5 rounded-md bg-[#2E2E2E] text-[#D6D6D6] border border-[#3D3D3D] font-semibold">
+        <span className="px-2.5 py-0.5 rounded-none bg-[#2E2E2E] text-[#D6D6D6] border border-[#3D3D3D] font-semibold">
           {neutralCount} Neutral
         </span>
       </div>
@@ -77,7 +77,7 @@ export function PeopleSentiment({ people }: PeopleSentimentProps) {
           return (
             <div
               key={person.id}
-              className="p-3 rounded-xl border border-[#3D3D3D] hover:border-[#D95B28]/60 bg-[#2E2E2E]/60 hover:bg-[#2E2E2E] transition-all flex items-start justify-between gap-3"
+              className="p-3 rounded-none border border-[#3D3D3D] hover:border-[#D95B28]/60 bg-[#2E2E2E]/60 hover:bg-[#2E2E2E] transition-all flex items-start justify-between gap-3"
             >
               <div className="flex items-start gap-2.5 flex-1 min-w-0">
                 <span className="text-lg shrink-0 mt-0.5" role="img" aria-label={person.relationship}>
@@ -86,7 +86,7 @@ export function PeopleSentiment({ people }: PeopleSentimentProps) {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5 flex-wrap">
                     <span className="text-xs font-bold text-[#F0F0F0] truncate">{person.name}</span>
-                    <span className="text-[10px] font-mono px-1 rounded bg-[#1A1A1A] text-[#999999] border border-[#3D3D3D]">
+                    <span className="text-[10px] font-mono px-1 rounded-none bg-[#1A1A1A] text-[#999999] border border-[#3D3D3D]">
                       {person.accountId}
                     </span>
                   </div>

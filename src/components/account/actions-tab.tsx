@@ -14,14 +14,14 @@ export function ActionsTab({ actions, onInspectEvidence }: ActionsTabProps) {
   return (
     <div className="space-y-4">
       {/* Question Header */}
-      <div className="p-4 bg-[#242424] border border-[#D95B28]/40 rounded-2xl flex items-center justify-between">
+      <div className="p-4 bg-[#242424] border border-[#3D3D3D] border-l-4 border-l-[#D95B28] rounded-none flex items-center justify-between">
         <div>
           <h3 className="text-sm font-bold text-[#F0F0F0]">Q3: What should happen next?</h3>
           <p className="text-xs text-[#999999] mt-0.5">
             Recommended moves ranked by deal value at risk and stakeholder responsiveness.
           </p>
         </div>
-        <span className="text-xs font-mono font-bold bg-[#1A1A1A] px-2.5 py-1 rounded-lg text-[#EC7D42] border border-[#D95B28]/40 shadow-xs">
+        <span className="text-xs font-mono font-bold bg-[#1A1A1A] px-2.5 py-1 text-[#EC7D42] border border-[#3D3D3D] rounded-none">
           {actions.length} ACTIONS FOR THIS ACCOUNT
         </span>
       </div>
@@ -33,11 +33,11 @@ export function ActionsTab({ actions, onInspectEvidence }: ActionsTabProps) {
           return (
             <div
               key={act.id || act.priority}
-              className="p-5 rounded-2xl bg-[#242424] border border-[#3D3D3D] shadow-lg shadow-black/20 space-y-3"
+              className="p-5 rounded-none bg-[#242424] border border-[#3D3D3D] space-y-3"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-start gap-3 flex-1">
-                  <span className="w-7 h-7 rounded-full bg-[#D95B28] text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 shadow-sm shadow-[#D95B28]/30">
+                  <span className="w-7 h-7 rounded-none bg-[#D95B28] text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
                     {act.priority}
                   </span>
                   <div className="space-y-1">
@@ -83,7 +83,7 @@ export function ActionsTab({ actions, onInspectEvidence }: ActionsTabProps) {
                           <button
                             key={evId}
                             onClick={() => onInspectEvidence?.(evId)}
-                            className="px-1.5 py-0.2 rounded font-mono font-semibold text-[10px] bg-[#1A1A1A] hover:bg-[#D95B28]/20 text-[#D6D6D6] hover:text-[#EC7D42] border border-[#3D3D3D] transition-colors"
+                            className="px-1.5 py-0.2 rounded-none font-mono font-semibold text-[10px] bg-[#1A1A1A] hover:bg-[#D95B28]/20 text-[#D6D6D6] hover:text-[#EC7D42] border border-[#3D3D3D] transition-colors"
                           >
                             [{evId}]
                           </button>

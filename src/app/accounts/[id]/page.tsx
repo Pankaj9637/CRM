@@ -184,7 +184,7 @@ export default function AccountDetailPage() {
 
   if (fetchError || !data || !data.account) {
     return (
-      <div className="p-8 text-center bg-[#242424] rounded-2xl border border-[#F43F5E]/40 space-y-3">
+      <div className="p-8 text-center bg-[#242424] rounded-none border border-[#F43F5E]/40 space-y-3">
         <AlertTriangle className="h-8 w-8 text-[#F43F5E] mx-auto mb-2" />
         <h3 className="text-base font-bold text-[#F0F0F0]">
           {fetchError ? 'Error Loading Account Data' : 'Account Not Found'}
@@ -195,21 +195,21 @@ export default function AccountDetailPage() {
         <div className="flex items-center justify-center gap-3 pt-2">
           <button
             onClick={fetchAccountDetail}
-            className="px-4 py-2 text-xs font-semibold bg-[#2E2E2E] hover:bg-[#3D3D3D] text-[#F0F0F0] rounded-xl border border-[#3D3D3D] transition-colors"
+            className="px-4 py-2 text-xs font-semibold bg-[#2E2E2E] hover:bg-[#3D3D3D] text-[#F0F0F0] rounded-none border border-[#3D3D3D] transition-colors"
           >
             Retry Request
           </button>
           <button
             onClick={handleSyncAccount}
             disabled={syncing}
-            className="px-4 py-2 text-xs font-semibold bg-[#2E2E2E] hover:bg-[#3D3D3D] text-[#EC7D42] rounded-xl border border-[#D95B28]/40 transition-colors flex items-center gap-1.5"
+            className="px-4 py-2 text-xs font-semibold bg-[#2E2E2E] hover:bg-[#3D3D3D] text-[#EC7D42] rounded-none border border-[#D95B28]/40 transition-colors flex items-center gap-1.5"
           >
             <RotateCw className={`h-3 w-3 ${syncing ? 'animate-spin' : ''}`} />
             <span>Sync from MCP</span>
           </button>
           <Link
             href="/accounts"
-            className="inline-block px-4 py-2 text-xs font-semibold bg-[#D95B28] hover:bg-[#A33D14] text-white rounded-xl shadow-md shadow-[#D95B28]/25 transition-all"
+            className="inline-block px-4 py-2 text-xs font-semibold bg-[#D95B28] hover:bg-[#A33D14] text-white rounded-none transition-all border border-[#D95B28]"
           >
             Return to Accounts Portfolio
           </Link>
@@ -243,15 +243,15 @@ export default function AccountDetailPage() {
         </div>
 
         {/* Dynamic Account Switcher Pill */}
-        <div className="flex items-center gap-1.5 p-1 bg-[#242424] border border-[#3D3D3D] rounded-xl shadow-xs self-start overflow-x-auto max-w-full">
+        <div className="flex items-center gap-1.5 p-1 bg-[#242424] border border-[#3D3D3D] rounded-none self-start overflow-x-auto max-w-full">
           <span className="text-[11px] font-semibold text-[#8A8A8A] px-2 uppercase shrink-0">Switch:</span>
           {allAccounts.map((acc) => (
             <button
               key={acc.id}
               onClick={() => router.push(`/accounts/${acc.id}`)}
-              className={`px-3 py-1 text-xs font-bold rounded-lg transition-colors whitespace-nowrap ${
+              className={`px-3 py-1 text-xs font-bold rounded-none transition-colors whitespace-nowrap ${
                 accountId === acc.id
-                  ? 'bg-[#D95B28] text-white shadow-sm'
+                  ? 'bg-[#D95B28] text-white'
                   : 'text-[#D6D6D6] hover:bg-[#2E2E2E]'
               }`}
             >
@@ -262,10 +262,10 @@ export default function AccountDetailPage() {
       </div>
 
       {/* Account Workspace Header Banner */}
-      <div className="bg-[#242424] rounded-2xl border border-[#3D3D3D] shadow-lg shadow-black/20 p-6 space-y-4">
+      <div className="bg-[#242424] rounded-none border border-[#3D3D3D] p-6 space-y-4">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="flex items-start gap-4">
-            <span className="w-12 h-12 rounded-xl bg-[#1A1A1A] text-[#EC7D42] border border-[#D95B28]/40 font-mono font-bold text-lg flex items-center justify-center shadow-md">
+            <span className="w-12 h-12 rounded-none bg-[#1A1A1A] text-[#EC7D42] border border-[#D95B28]/40 font-mono font-bold text-lg flex items-center justify-center">
               {account.id}
             </span>
             <div>
@@ -285,14 +285,14 @@ export default function AccountDetailPage() {
           <div className="flex items-center gap-2 self-start lg:self-center">
             <button
               onClick={() => setIsNoteWriterOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-[#D6D6D6] bg-[#2E2E2E] hover:bg-[#3D3D3D] border border-[#3D3D3D] rounded-xl transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-[#D6D6D6] bg-[#2E2E2E] hover:bg-[#3D3D3D] border border-[#3D3D3D] rounded-none transition-colors"
             >
               <PenLine className="h-3.5 w-3.5 text-[#D95B28]" />
               <span>Log Note</span>
             </button>
             <button
               onClick={() => setIsCopilotOpen(true)}
-              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-[#D95B28] hover:bg-[#A33D14] rounded-xl shadow-md shadow-[#D95B28]/25 transition-all"
+              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-[#D95B28] hover:bg-[#A33D14] rounded-none transition-all border border-[#D95B28]"
             >
               <Sparkles className="h-3.5 w-3.5 text-white" />
               <span>Ask Copilot about Account {accountId}</span>
@@ -309,9 +309,9 @@ export default function AccountDetailPage() {
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-none text-xs font-semibold whitespace-nowrap transition-all ${
                   isActive
-                    ? 'bg-[#D95B28] text-white shadow-md shadow-[#D95B28]/20'
+                    ? 'bg-[#D95B28] text-white'
                     : 'text-[#999999] hover:text-[#F0F0F0] hover:bg-[#2E2E2E]'
                 }`}
               >
@@ -319,7 +319,7 @@ export default function AccountDetailPage() {
                 <span>{tab.label}</span>
                 {tab.count !== undefined && (
                   <span
-                    className={`ml-1 text-[10px] font-mono px-1.5 py-0.2 rounded-full ${
+                    className={`ml-1 text-[10px] font-mono px-1.5 py-0.2 rounded-none ${
                       isActive ? 'bg-black/30 text-white' : 'bg-[#1A1A1A] text-[#999999] border border-[#3D3D3D]'
                     }`}
                   >

@@ -31,14 +31,14 @@ export function PeopleTab({ contacts, deals, dealContacts, onInspectEvidence, on
   return (
     <div className="space-y-6">
       {/* Question Header */}
-      <div className="p-4 bg-[#242424] border border-[#D95B28]/40 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="p-4 bg-[#242424] border border-[#3D3D3D] border-l-4 border-l-[#D95B28] rounded-none flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h3 className="text-sm font-bold text-[#F0F0F0]">Q2: Who has the power?</h3>
           <p className="text-xs text-[#999999] mt-0.5">
             Stakeholder persona directory with platform telemetry, engagement meters, deal responsibilities, and hot-button pain points.
           </p>
         </div>
-        <span className="text-xs font-mono font-bold bg-[#1A1A1A] px-2.5 py-1 rounded-lg text-[#EC7D42] border border-[#D95B28]/40 shadow-xs flex items-center gap-1.5 self-start sm:self-center">
+        <span className="text-xs font-mono font-bold bg-[#1A1A1A] px-2.5 py-1 rounded-none text-[#EC7D42] border border-[#3D3D3D] flex items-center gap-1.5 self-start sm:self-center">
           <Sparkles className="h-3 w-3 text-[#D95B28]" />
           <span>STAKEHOLDER POWER MAP</span>
         </span>
@@ -62,9 +62,9 @@ export function PeopleTab({ contacts, deals, dealContacts, onInspectEvidence, on
             <button
               key={item.id}
               onClick={() => setRoleFilter(item.id)}
-              className={`px-3 py-1 rounded-lg font-medium transition-colors whitespace-nowrap ${
+              className={`px-3 py-1 rounded-none font-medium transition-colors whitespace-nowrap ${
                 roleFilter === item.id
-                  ? 'bg-[#D95B28] text-white shadow-xs'
+                  ? 'bg-[#D95B28] text-white'
                   : 'bg-[#242424] text-[#999999] hover:text-[#F0F0F0] border border-[#3D3D3D]'
               }`}
             >
@@ -90,13 +90,13 @@ export function PeopleTab({ contacts, deals, dealContacts, onInspectEvidence, on
       </div>
 
       {/* Deal-by-Deal Power Breakdown Table */}
-      <div className="bg-[#242424] rounded-2xl border border-[#3D3D3D] shadow-lg shadow-black/20 p-5 space-y-4">
+      <div className="bg-[#242424] rounded-none border border-[#3D3D3D] p-5 space-y-4">
         <div className="flex items-center justify-between border-b border-[#3D3D3D] pb-3">
           <div>
             <h4 className="text-sm font-bold text-[#F0F0F0]">Decision Authority Matrix by Deal</h4>
             <p className="text-xs text-[#999999]">Decider, Payer, User, and Blocker mapped to individual opportunities</p>
           </div>
-          <span className="text-xs text-[#EC7D42] font-semibold bg-[#D95B28]/15 px-2.5 py-0.5 rounded-lg border border-[#D95B28]/40">
+          <span className="text-xs text-[#EC7D42] font-semibold bg-[#D95B28]/15 px-2.5 py-0.5 rounded-none border border-[#D95B28]/40">
             AI Inferred
           </span>
         </div>

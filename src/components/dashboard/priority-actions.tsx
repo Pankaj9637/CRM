@@ -41,10 +41,10 @@ export function PriorityActions({ actions, onInspectEvidence }: PriorityActionsP
   };
 
   return (
-    <div className="bg-[#242424] rounded-2xl border border-[#3D3D3D] shadow-lg shadow-black/20 overflow-hidden">
+    <div className="bg-[#242424] rounded-none border border-[#3D3D3D] overflow-hidden">
       <div className="px-5 py-4 border-b border-[#3D3D3D] flex items-center justify-between bg-[#2E2E2E]/60">
         <div className="flex items-center gap-2.5">
-          <div className="h-7 w-7 rounded-lg bg-[#D95B28]/20 text-[#EC7D42] border border-[#D95B28]/40 flex items-center justify-center font-bold text-xs">
+          <div className="h-7 w-7 rounded-none bg-[#D95B28]/20 text-[#EC7D42] border border-[#D95B28]/40 flex items-center justify-center font-bold text-xs">
             ⚡
           </div>
           <div>
@@ -52,7 +52,7 @@ export function PriorityActions({ actions, onInspectEvidence }: PriorityActionsP
             <p className="text-xs text-[#999999]">AI-ranked by commercial exposure and urgency</p>
           </div>
         </div>
-        <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-[#1A1A1A] text-[#D6D6D6] border border-[#3D3D3D]">
+        <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-none bg-[#1A1A1A] text-[#D6D6D6] border border-[#3D3D3D]">
           TOP 5 ACTIONS
         </span>
       </div>
@@ -64,7 +64,7 @@ export function PriorityActions({ actions, onInspectEvidence }: PriorityActionsP
             className="p-4 hover:bg-[#2E2E2E]/50 transition-colors group flex flex-col sm:flex-row sm:items-start justify-between gap-4"
           >
             <div className="flex items-start gap-3 flex-1">
-              <span className="shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-[#1A1A1A] text-[#D6D6D6] font-mono font-bold text-xs border border-[#3D3D3D] group-hover:bg-[#D95B28] group-hover:text-white group-hover:border-[#D95B28] transition-colors">
+              <span className="shrink-0 flex items-center justify-center w-6 h-6 rounded-none bg-[#1A1A1A] text-[#D6D6D6] font-mono font-bold text-xs border border-[#3D3D3D] group-hover:bg-[#D95B28] group-hover:text-white group-hover:border-[#D95B28] transition-colors">
                 {act.priority}
               </span>
 
@@ -96,7 +96,7 @@ export function PriorityActions({ actions, onInspectEvidence }: PriorityActionsP
 
                   <span className="text-[#3D3D3D]">•</span>
 
-                  <span className="font-mono text-[#5eead4] font-bold bg-[#3A7A65]/20 px-2 py-0.5 rounded border border-[#3A7A65]/40">
+                  <span className="font-mono text-[#5eead4] font-bold bg-[#3A7A65]/20 px-2 py-0.5 rounded-none border border-[#3A7A65]/40">
                     {formatCurrency(act.impact_value)} at stake
                   </span>
                 </div>
@@ -109,7 +109,7 @@ export function PriorityActions({ actions, onInspectEvidence }: PriorityActionsP
                         <button
                           key={evId}
                           onClick={() => onInspectEvidence?.(evId)}
-                          className="px-1.5 py-0.2 rounded font-mono font-semibold text-[10px] bg-[#1A1A1A] hover:bg-[#D95B28]/20 text-[#D6D6D6] hover:text-[#EC7D42] border border-[#3D3D3D] transition-colors"
+                          className="px-1.5 py-0.2 rounded-none font-mono font-semibold text-[10px] bg-[#1A1A1A] hover:bg-[#D95B28]/20 text-[#D6D6D6] hover:text-[#EC7D42] border border-[#3D3D3D] transition-colors"
                         >
                           [{evId}]
                         </button>
@@ -123,7 +123,7 @@ export function PriorityActions({ actions, onInspectEvidence }: PriorityActionsP
             <div className="shrink-0 flex items-center self-end sm:self-center">
               <Link
                 href={`/accounts/${act.account_id}`}
-                className="px-3.5 py-1.5 text-xs font-semibold text-white bg-[#D95B28] hover:bg-[#A33D14] rounded-lg transition-colors border border-[#D95B28] shadow-sm shadow-[#D95B28]/20"
+                className="px-3.5 py-1.5 text-xs font-semibold text-white bg-[#D95B28] hover:bg-[#A33D14] rounded-none transition-colors border border-[#D95B28]"
               >
                 Execute Action →
               </Link>

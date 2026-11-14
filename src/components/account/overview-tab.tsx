@@ -26,8 +26,8 @@ export function OverviewTab({ account, deals, offers, contacts, risks, notes = [
   return (
     <div className="space-y-6">
       {/* Official Story banner */}
-      <div className="p-5 rounded-2xl bg-[#242424] border border-[#D95B28]/40 shadow-lg shadow-black/20 text-[#D6D6D6] flex items-start gap-3.5">
-        <div className="p-2.5 rounded-xl bg-[#D95B28]/20 text-[#EC7D42] border border-[#D95B28]/40 shrink-0 mt-0.5">
+      <div className="p-5 rounded-none bg-[#242424] border border-[#3D3D3D] border-l-4 border-l-[#D95B28] text-[#D6D6D6] flex items-start gap-3.5">
+        <div className="p-2.5 rounded-none bg-[#D95B28]/20 text-[#EC7D42] border border-[#D95B28]/40 shrink-0 mt-0.5">
           <FileText className="h-5 w-5" />
         </div>
         <div>
@@ -42,7 +42,7 @@ export function OverviewTab({ account, deals, offers, contacts, risks, notes = [
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
-        <div className="p-4 rounded-2xl bg-[#242424] border border-[#3D3D3D] shadow-sm">
+        <div className="p-4 rounded-none bg-[#242424] border border-[#3D3D3D]">
           <div className="text-[11px] font-semibold text-[#999999] uppercase flex items-center gap-1.5">
             <TrendingUp className="h-3.5 w-3.5 text-[#EC7D42]" />
             <span>Pipeline Value</span>
@@ -53,7 +53,7 @@ export function OverviewTab({ account, deals, offers, contacts, risks, notes = [
           <div className="text-[11px] text-[#999999] mt-0.5">{deals.length} active opportunities</div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-[#242424] border border-[#3D3D3D] shadow-sm">
+        <div className="p-4 rounded-none bg-[#242424] border border-[#3D3D3D]">
           <div className="text-[11px] font-semibold text-[#5eead4] uppercase flex items-center gap-1.5">
             <Award className="h-3.5 w-3.5 text-[#3A7A65]" />
             <span>Won Offers</span>
@@ -66,7 +66,7 @@ export function OverviewTab({ account, deals, offers, contacts, risks, notes = [
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-[#242424] border border-[#3D3D3D] shadow-sm">
+        <div className="p-4 rounded-none bg-[#242424] border border-[#3D3D3D]">
           <div className="text-[11px] font-semibold text-[#fda4af] uppercase flex items-center gap-1.5">
             <AlertTriangle className="h-3.5 w-3.5 text-[#F43F5E]" />
             <span>Open Blockers</span>
@@ -77,7 +77,7 @@ export function OverviewTab({ account, deals, offers, contacts, risks, notes = [
           <div className="text-[11px] text-[#fda4af]/80 mt-0.5">{criticalRisksCount} critical risks</div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-[#242424] border border-[#3D3D3D] shadow-sm">
+        <div className="p-4 rounded-none bg-[#242424] border border-[#3D3D3D]">
           <div className="text-[11px] font-semibold text-[#D6D6D6] uppercase flex items-center gap-1.5">
             <Users className="h-3.5 w-3.5 text-[#999999]" />
             <span>Stakeholders</span>
@@ -93,7 +93,7 @@ export function OverviewTab({ account, deals, offers, contacts, risks, notes = [
       </div>
 
       {/* Offers breakdown */}
-      <div className="bg-[#242424] rounded-2xl border border-[#3D3D3D] shadow-lg shadow-black/20 p-5 space-y-3">
+      <div className="bg-[#242424] rounded-none border border-[#3D3D3D] p-5 space-y-3">
         <div className="flex items-center justify-between border-b border-[#3D3D3D] pb-3">
           <h3 className="text-sm font-bold text-[#F0F0F0]">Commercial Offers & Pitches</h3>
           <span className="text-xs font-mono font-semibold text-[#999999]">
@@ -126,10 +126,10 @@ export function OverviewTab({ account, deals, offers, contacts, risks, notes = [
       </div>
 
       {/* Field Intelligence & Notes (Live MCP Write-back) */}
-      <div className="bg-[#242424] rounded-2xl border border-[#3D3D3D] shadow-lg shadow-black/20 p-5 space-y-3">
+      <div className="bg-[#242424] rounded-none border border-[#3D3D3D] p-5 space-y-3">
         <div className="flex items-center justify-between border-b border-[#3D3D3D] pb-3">
           <div className="flex items-center gap-2">
-            <div className="h-6 w-6 rounded-lg bg-[#D95B28]/20 text-[#EC7D42] border border-[#D95B28]/40 flex items-center justify-center font-bold text-xs">
+            <div className="h-6 w-6 rounded-none bg-[#D95B28]/20 text-[#EC7D42] border border-[#D95B28]/40 flex items-center justify-center font-bold text-xs">
               <PenLine className="h-3.5 w-3.5" />
             </div>
             <div>
@@ -139,7 +139,7 @@ export function OverviewTab({ account, deals, offers, contacts, risks, notes = [
           </div>
           <button
             onClick={onOpenNoteWriter}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-[#2E2E2E] hover:bg-[#3D3D3D] text-[#F0F0F0] border border-[#3D3D3D] rounded-xl transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-[#2E2E2E] hover:bg-[#3D3D3D] text-[#F0F0F0] border border-[#3D3D3D] rounded-none transition-colors"
           >
             <PenLine className="h-3 w-3 text-[#D95B28]" />
             <span>Add Note</span>
@@ -161,7 +161,7 @@ export function OverviewTab({ account, deals, offers, contacts, risks, notes = [
                       {note.created_at}
                     </span>
                     {Boolean(note.synced_to_mcp) && (
-                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-[#3A7A65]/20 text-[#5eead4] border border-[#3A7A65]/40 text-[10px] font-medium">
+                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-none bg-[#3A7A65]/20 text-[#5eead4] border border-[#3A7A65]/40 text-[10px] font-medium">
                         <CheckCircle2 className="h-2.5 w-2.5" />
                         MCP Synced
                       </span>
@@ -171,7 +171,7 @@ export function OverviewTab({ account, deals, offers, contacts, risks, notes = [
                     <span className="font-semibold text-[#F0F0F0]">{note.title}</span>
                   )}
                 </div>
-                <p className="text-xs text-[#D6D6D6] leading-relaxed bg-[#1A1A1A] p-3 rounded-xl border border-[#3D3D3D]">
+                <p className="text-xs text-[#D6D6D6] leading-relaxed bg-[#1A1A1A] p-3 rounded-none border border-[#3D3D3D]">
                   {note.text}
                 </p>
               </div>

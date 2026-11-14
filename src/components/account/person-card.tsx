@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Badge } from '@/components/badge';
 import { 
   User, 
   MapPin, 
@@ -9,10 +8,6 @@ import {
   Flame, 
   ChevronRight, 
   Sparkles, 
-  CheckCircle2, 
-  AlertCircle,
-  Clock,
-  Layers,
   ShieldCheck,
   Send
 } from 'lucide-react';
@@ -48,22 +43,22 @@ export function PersonCard({ person, onInspectEvidence, onOpenNoteWriter }: Pers
     switch (person.relationship?.toLowerCase()) {
       case 'ally':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#3A7A65]/20 text-[#5eead4] border border-[#3A7A65]/40 shadow-xs">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#5eead4] animate-pulse" />
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[10px] font-mono font-bold bg-[#3A7A65]/20 text-[#5eead4] border border-[#3A7A65]/40">
+            <span className="w-1.5 h-1.5 bg-[#5eead4]" />
             ALLY
           </span>
         );
       case 'warm':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#3E6F9E]/20 text-[#7dd3fc] border border-[#3E6F9E]/40 shadow-xs">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#7dd3fc]" />
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[10px] font-mono font-bold bg-[#3E6F9E]/20 text-[#7dd3fc] border border-[#3E6F9E]/40">
+            <span className="w-1.5 h-1.5 bg-[#7dd3fc]" />
             WARM
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#D9A441]/20 text-[#fde047] border border-[#D9A441]/40 shadow-xs">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#fde047]" />
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[10px] font-mono font-bold bg-[#D9A441]/20 text-[#fde047] border border-[#D9A441]/40">
+            <span className="w-1.5 h-1.5 bg-[#fde047]" />
             NEUTRAL
           </span>
         );
@@ -81,13 +76,12 @@ export function PersonCard({ person, onInspectEvidence, onOpenNoteWriter }: Pers
     if (role === 'User') colorClass = 'bg-[#D95B28]/20 text-[#fdba74] border-[#D95B28]/40';
 
     return (
-      <span className={cn('px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider border shadow-xs', colorClass)}>
+      <span className={cn('px-2 py-0.5 rounded-none text-[10px] font-mono font-bold uppercase tracking-wider border', colorClass)}>
         [{role}]
       </span>
     );
   };
 
-  // Compute activity meter percentage
   const logins = person.login_count || 0;
   const activityPct = Math.min(100, Math.round((logins / 70) * 100));
   const activityColor =
@@ -95,12 +89,12 @@ export function PersonCard({ person, onInspectEvidence, onOpenNoteWriter }: Pers
 
   return (
     <>
-      <div className="bg-[#242424] rounded-2xl border border-[#3D3D3D] hover:border-[#D95B28]/50 shadow-md transition-all flex flex-col justify-between overflow-hidden group">
+      <div className="bg-[#242424] rounded-none border border-[#3D3D3D] hover:border-[#D95B28]/60 transition-all flex flex-col justify-between group">
         <div className="p-5 space-y-4">
           {/* Header */}
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-start gap-3">
-              <div className="h-10 w-10 rounded-xl bg-[#1A1A1A] text-[#EC7D42] border border-[#3D3D3D] flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
+              <div className="h-10 w-10 bg-[#1A1A1A] text-[#EC7D42] border border-[#3D3D3D] flex items-center justify-center font-mono font-bold text-sm shrink-0">
                 {person.name
                   .split(' ')
                   .map((n) => n[0])
@@ -117,7 +111,7 @@ export function PersonCard({ person, onInspectEvidence, onOpenNoteWriter }: Pers
                 </div>
                 <p className="text-xs text-[#999999] mt-0.5">{person.role}</p>
                 {person.location && (
-                  <p className="text-[11px] text-[#8A8A8A] flex items-center gap-1 mt-1 font-medium">
+                  <p className="text-[11px] text-[#8A8A8A] flex items-center gap-1 mt-1 font-mono font-medium">
                     <MapPin className="h-3 w-3 text-[#999999]" />
                     <span>{person.location}</span>
                   </p>
@@ -128,31 +122,31 @@ export function PersonCard({ person, onInspectEvidence, onOpenNoteWriter }: Pers
           </div>
 
           {/* Activity & Engagement Meter */}
-          <div className="p-3 rounded-xl bg-[#1A1A1A] border border-[#3D3D3D] space-y-2">
-            <div className="flex items-center justify-between text-[11px]">
+          <div className="p-3 bg-[#1A1A1A] border border-[#3D3D3D] space-y-2">
+            <div className="flex items-center justify-between text-[11px] font-mono">
               <span className="text-[#8A8A8A] font-semibold uppercase flex items-center gap-1.5">
                 <Activity className="h-3 w-3 text-[#EC7D42]" />
                 <span>Telemetry & Logins</span>
               </span>
-              <span className="font-mono text-xs font-bold text-[#F0F0F0]">
+              <span className="text-xs font-bold text-[#F0F0F0]">
                 {logins} logins
               </span>
             </div>
             {/* Progress bar */}
-            <div className="w-full bg-[#2E2E2E] h-1.5 rounded-full overflow-hidden">
+            <div className="w-full bg-[#2E2E2E] h-1.5 overflow-hidden">
               <div
-                className={cn('h-full transition-all duration-500 rounded-full', activityColor)}
+                className={cn('h-full transition-all duration-300', activityColor)}
                 style={{ width: `${Math.max(5, activityPct)}%` }}
               />
             </div>
-            <p className="text-[11px] font-medium text-[#D6D6D6]">
+            <p className="text-[11px] font-mono text-[#D6D6D6]">
               {person.activity_summary || `${logins} platform sign-ins recorded in last 90 days`}
             </p>
           </div>
 
           {/* Hot-Button / Pain Point Callout */}
-          <div className="p-3 rounded-xl bg-[#D95B28]/10 border border-[#D95B28]/30 space-y-1">
-            <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-[#EC7D42]">
+          <div className="p-3 bg-[#2E2E2E] border border-[#D95B28]/40 border-l-2 space-y-1">
+            <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-[#EC7D42]">
               <Flame className="h-3.5 w-3.5 text-[#D95B28]" />
               <span>Hot-Button / Critical Pain Point</span>
             </div>
@@ -163,10 +157,10 @@ export function PersonCard({ person, onInspectEvidence, onOpenNoteWriter }: Pers
         </div>
 
         {/* Actionable How to Engage CTA Footer */}
-        <div className="p-4 bg-[#1E1E1E] border-t border-[#3D3D3D] flex items-center justify-between">
+        <div className="p-3.5 bg-[#1E1E1E] border-t border-[#3D3D3D] flex items-center justify-between">
           <button
             onClick={() => setIsDrawerOpen(true)}
-            className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-[#F0F0F0] bg-[#2E2E2E] hover:bg-[#3D3D3D] hover:text-white border border-[#3D3D3D] rounded-xl transition-all shadow-xs"
+            className="w-full flex items-center justify-between px-3 py-2 text-xs font-mono font-bold uppercase tracking-wider text-[#F0F0F0] bg-[#2E2E2E] hover:bg-[#3D3D3D] hover:text-white border border-[#3D3D3D] transition-all"
           >
             <span className="flex items-center gap-1.5">
               <Sparkles className="h-3.5 w-3.5 text-[#EC7D42]" />
@@ -177,35 +171,35 @@ export function PersonCard({ person, onInspectEvidence, onOpenNoteWriter }: Pers
         </div>
       </div>
 
-      {/* Slide-out How to Engage Drawer */}
+      {/* How to Engage Drawer */}
       {isDrawerOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="bg-[#242424] border border-[#3D3D3D] rounded-2xl w-full max-w-lg shadow-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 animate-in fade-in duration-150">
+          <div className="bg-[#242424] border border-[#3D3D3D] rounded-none w-full max-w-lg p-6 space-y-5 animate-in zoom-in-95 duration-200">
             {/* Drawer Header */}
             <div className="flex items-start justify-between border-b border-[#3D3D3D] pb-4">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl bg-[#D95B28]/20 text-[#EC7D42] border border-[#D95B28]/40 flex items-center justify-center font-bold text-sm">
+                <div className="h-10 w-10 bg-[#D95B28]/20 text-[#EC7D42] border border-[#D95B28]/40 flex items-center justify-center font-bold text-sm">
                   <ShieldCheck className="h-5 w-5" />
                 </div>
                 <div>
                   <h3 className="text-base font-bold text-[#F0F0F0]">
                     Engagement Directive: {person.name}
                   </h3>
-                  <p className="text-xs text-[#999999]">{person.role} • {roleBadge()}</p>
+                  <p className="text-xs text-[#999999] font-mono">{person.role} • {roleBadge()}</p>
                 </div>
               </div>
               <button
                 onClick={() => setIsDrawerOpen(false)}
-                className="text-[#999999] hover:text-[#F0F0F0] p-1 rounded-lg hover:bg-[#2E2E2E] transition-colors"
+                className="text-[#999999] hover:text-[#F0F0F0] p-1 hover:bg-[#2E2E2E] transition-colors"
               >
                 ✕
               </button>
             </div>
 
-            {/* AI Directive Content */}
+            {/* Directive Content */}
             <div className="space-y-4">
-              <div className="p-4 rounded-xl bg-[#1A1A1A] border border-[#3D3D3D] space-y-2">
-                <div className="text-[11px] font-bold uppercase tracking-wider text-[#EC7D42] flex items-center gap-1.5">
+              <div className="p-4 bg-[#1A1A1A] border border-[#3D3D3D] space-y-2">
+                <div className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#EC7D42] flex items-center gap-1.5">
                   <Sparkles className="h-3.5 w-3.5 text-[#D95B28]" />
                   <span>Actionable Directive</span>
                 </div>
@@ -216,8 +210,8 @@ export function PersonCard({ person, onInspectEvidence, onOpenNoteWriter }: Pers
               </div>
 
               {/* Hot-Button reminder */}
-              <div className="p-3.5 rounded-xl bg-[#D95B28]/10 border border-[#D95B28]/30 space-y-1">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-[#EC7D42] flex items-center gap-1">
+              <div className="p-3.5 bg-[#2E2E2E] border border-[#D95B28]/40 border-l-2 space-y-1">
+                <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#EC7D42] flex items-center gap-1">
                   <Flame className="h-3 w-3" />
                   <span>Key Stakeholder Leverage</span>
                 </div>
@@ -227,16 +221,16 @@ export function PersonCard({ person, onInspectEvidence, onOpenNoteWriter }: Pers
               </div>
 
               {/* Grounding Telemetry */}
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="p-3 rounded-xl bg-[#1A1A1A] border border-[#3D3D3D]">
-                  <span className="text-[10px] font-semibold text-[#8A8A8A] uppercase">90-Day Telemetry</span>
-                  <p className="font-mono font-bold text-[#F0F0F0] mt-1">{person.login_count || 0} logins</p>
+              <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+                <div className="p-3 bg-[#1A1A1A] border border-[#3D3D3D]">
+                  <span className="text-[10px] font-bold text-[#8A8A8A] uppercase">90-Day Telemetry</span>
+                  <p className="font-bold text-[#F0F0F0] mt-1">{person.login_count || 0} logins</p>
                   <p className="text-[10px] text-[#999999] mt-0.5">{person.activity_summary}</p>
                 </div>
-                <div className="p-3 rounded-xl bg-[#1A1A1A] border border-[#3D3D3D]">
-                  <span className="text-[10px] font-semibold text-[#8A8A8A] uppercase">Relationship Type</span>
+                <div className="p-3 bg-[#1A1A1A] border border-[#3D3D3D]">
+                  <span className="text-[10px] font-bold text-[#8A8A8A] uppercase">Relationship Type</span>
                   <div className="mt-1">{relationshipBadge()}</div>
-                  <p className="text-[10px] text-[#999999] mt-0.5">Commercial role: {person.deal_role}</p>
+                  <p className="text-[10px] text-[#999999] mt-0.5">Role: {person.deal_role}</p>
                 </div>
               </div>
             </div>
@@ -248,14 +242,14 @@ export function PersonCard({ person, onInspectEvidence, onOpenNoteWriter }: Pers
                   setIsDrawerOpen(false);
                   onOpenNoteWriter?.();
                 }}
-                className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold bg-[#2E2E2E] hover:bg-[#3D3D3D] text-[#F0F0F0] rounded-xl border border-[#3D3D3D] transition-colors"
+                className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-mono font-bold uppercase tracking-wider bg-[#2E2E2E] hover:bg-[#3D3D3D] text-[#F0F0F0] border border-[#3D3D3D] transition-colors"
               >
                 <Send className="h-3.5 w-3.5 text-[#EC7D42]" />
                 <span>Log Note for {person.name.split(' ')[0]}</span>
               </button>
               <button
                 onClick={() => setIsDrawerOpen(false)}
-                className="px-4 py-2 text-xs font-semibold bg-[#D95B28] hover:bg-[#A33D14] text-white rounded-xl shadow-md shadow-[#D95B28]/25 transition-all"
+                className="px-4 py-2 text-xs font-mono font-bold uppercase tracking-wider bg-[#D95B28] hover:bg-[#A33D14] text-white border border-[#A33D14] transition-all"
               >
                 Done
               </button>

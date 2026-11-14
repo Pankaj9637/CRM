@@ -17,14 +17,14 @@ export function RisksTab({ risks, deals, onInspectEvidence }: RisksTabProps) {
   return (
     <div className="space-y-4">
       {/* Question Header */}
-      <div className="p-4 bg-[#242424] border border-[#D95B28]/40 rounded-2xl flex items-center justify-between">
+      <div className="p-4 bg-[#242424] border border-[#3D3D3D] border-l-4 border-l-[#D95B28] rounded-none flex items-center justify-between">
         <div>
           <h3 className="text-sm font-bold text-[#F0F0F0]">Q4: What is at risk?</h3>
           <p className="text-xs text-[#999999] mt-0.5">
             Vulnerabilities identified across stalled DPIAs, unverified ROI models, and key-person departures.
           </p>
         </div>
-        <span className="text-xs font-mono font-bold bg-[#1A1A1A] px-2.5 py-1 rounded-lg text-[#fda4af] border border-[#F43F5E]/40 shadow-xs">
+        <span className="text-xs font-mono font-bold bg-[#1A1A1A] px-2.5 py-1 rounded-none text-[#fda4af] border border-[#F43F5E]/40">
           {risks.length} IDENTIFIED THREATS
         </span>
       </div>
@@ -37,12 +37,12 @@ export function RisksTab({ risks, deals, onInspectEvidence }: RisksTabProps) {
           return (
             <div
               key={risk.id}
-              className="p-5 rounded-2xl bg-[#242424] border border-[#3D3D3D] shadow-lg shadow-black/20 space-y-3"
+              className="p-5 rounded-none bg-[#242424] border border-[#3D3D3D] space-y-3"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-start gap-3 flex-1">
                   <div
-                    className={`p-2 rounded-xl shrink-0 mt-0.5 ${
+                    className={`p-2 rounded-none shrink-0 mt-0.5 ${
                       risk.severity === 'critical'
                         ? 'bg-[#F43F5E]/20 text-[#fda4af] border border-[#F43F5E]/40'
                         : risk.severity === 'high'
@@ -76,7 +76,7 @@ export function RisksTab({ risks, deals, onInspectEvidence }: RisksTabProps) {
               </div>
 
               {/* Mitigation block */}
-              <div className="p-3 bg-[#1A1A1A] rounded-xl border border-[#3D3D3D] text-xs text-[#D6D6D6] space-y-1">
+              <div className="p-3 bg-[#1A1A1A] rounded-none border border-[#3D3D3D] text-xs text-[#D6D6D6] space-y-1">
                 <div className="text-[10px] font-bold uppercase tracking-wider text-[#8A8A8A]">
                   Tactical Mitigation Action
                 </div>
@@ -91,7 +91,7 @@ export function RisksTab({ risks, deals, onInspectEvidence }: RisksTabProps) {
                       <button
                         key={evId}
                         onClick={() => onInspectEvidence?.(evId)}
-                        className="px-1.5 py-0.2 rounded font-mono font-semibold text-[10px] bg-[#1A1A1A] hover:bg-[#D95B28]/20 text-[#D6D6D6] hover:text-[#EC7D42] border border-[#3D3D3D] transition-colors"
+                        className="px-1.5 py-0.2 rounded-none font-mono font-semibold text-[10px] bg-[#1A1A1A] hover:bg-[#D95B28]/20 text-[#D6D6D6] hover:text-[#EC7D42] border border-[#3D3D3D] transition-colors"
                       >
                         [{evId}]
                       </button>

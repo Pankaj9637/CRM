@@ -25,10 +25,10 @@ interface RiskAlertsProps {
 
 export function RiskAlerts({ risks, onInspectEvidence }: RiskAlertsProps) {
   return (
-    <div className="bg-[#242424] rounded-2xl border border-[#3D3D3D] shadow-lg shadow-black/20 p-5 space-y-4">
+    <div className="bg-[#242424] rounded-none border border-[#3D3D3D] p-5 space-y-4">
       <div className="flex items-center justify-between border-b border-[#3D3D3D] pb-3">
         <div className="flex items-center gap-2.5">
-          <div className="h-7 w-7 rounded-lg bg-[#D9A441]/20 text-[#fde047] border border-[#D9A441]/40 flex items-center justify-center font-bold text-xs">
+          <div className="h-7 w-7 rounded-none bg-[#D9A441]/20 text-[#fde047] border border-[#D9A441]/40 flex items-center justify-center font-bold text-xs">
             <ShieldAlert className="h-3.5 w-3.5" />
           </div>
           <div>
@@ -36,7 +36,7 @@ export function RiskAlerts({ risks, onInspectEvidence }: RiskAlertsProps) {
             <p className="text-xs text-[#999999]">Blockers, deadlines & evidentiary discrepancies</p>
           </div>
         </div>
-        <span className="text-[11px] font-mono font-bold text-[#fda4af] bg-[#F43F5E]/15 px-2.5 py-1 rounded border border-[#F43F5E]/40">
+        <span className="text-[11px] font-mono font-bold text-[#fda4af] bg-[#F43F5E]/15 px-2.5 py-1 rounded-none border border-[#F43F5E]/40">
           {risks.filter((r) => r.severity === 'critical').length} CRITICAL RISKS
         </span>
       </div>
@@ -45,7 +45,7 @@ export function RiskAlerts({ risks, onInspectEvidence }: RiskAlertsProps) {
         {risks.map((item, idx) => (
           <div
             key={item.id || idx}
-            className="p-3.5 rounded-xl border border-[#3D3D3D] hover:border-[#D95B28]/60 bg-[#2E2E2E]/60 hover:bg-[#2E2E2E] transition-all space-y-2.5"
+            className="p-3.5 rounded-none border border-[#3D3D3D] hover:border-[#D95B28]/60 bg-[#2E2E2E]/60 hover:bg-[#2E2E2E] transition-all space-y-2.5"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-start gap-2.5 flex-1">
@@ -85,7 +85,7 @@ export function RiskAlerts({ risks, onInspectEvidence }: RiskAlertsProps) {
             </div>
 
             {/* Mitigation */}
-            <div className="p-2.5 rounded-lg bg-[#1A1A1A] border border-[#3D3D3D] text-xs text-[#D6D6D6]">
+            <div className="p-2.5 rounded-none bg-[#1A1A1A] border border-[#3D3D3D] text-xs text-[#D6D6D6]">
               <strong className="text-[#F0F0F0] font-semibold">Mitigation Strategy: </strong>
               <span>{item.mitigation}</span>
             </div>
@@ -98,7 +98,7 @@ export function RiskAlerts({ risks, onInspectEvidence }: RiskAlertsProps) {
                     <button
                       key={evId}
                       onClick={() => onInspectEvidence?.(evId)}
-                      className="px-1.5 py-0.2 rounded font-mono font-semibold text-[10px] bg-[#1A1A1A] hover:bg-[#D95B28]/20 text-[#D6D6D6] hover:text-[#EC7D42] border border-[#3D3D3D] transition-colors"
+                      className="px-1.5 py-0.2 rounded-none font-mono font-semibold text-[10px] bg-[#1A1A1A] hover:bg-[#D95B28]/20 text-[#D6D6D6] hover:text-[#EC7D42] border border-[#3D3D3D] transition-colors"
                     >
                       [{evId}]
                     </button>

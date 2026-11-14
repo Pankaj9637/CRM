@@ -13,7 +13,6 @@ import {
   ChevronUp, 
   Flame, 
   HelpCircle, 
-  Sparkles,
   FileSearch,
   ExternalLink
 } from 'lucide-react';
@@ -46,7 +45,7 @@ export function DealsTab({
 
     if (integrity === 'contradicted') {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-[#F43F5E]/20 text-[#fda4af] border border-[#F43F5E]/40 shadow-xs">
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[10px] font-mono font-bold bg-[#F43F5E]/20 text-[#fda4af] border border-[#F43F5E]/40">
           <AlertCircle className="h-3 w-3" />
           [CLAIM / CONTRADICTED]
         </span>
@@ -54,14 +53,14 @@ export function DealsTab({
     }
     if (integrity === 'told') {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-[#D9A441]/20 text-[#fde047] border border-[#D9A441]/40 shadow-xs">
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[10px] font-mono font-bold bg-[#D9A441]/20 text-[#fde047] border border-[#D9A441]/40">
           <HelpCircle className="h-3 w-3" />
           [TOLD]
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-[#3A7A65]/20 text-[#5eead4] border border-[#3A7A65]/40 shadow-xs">
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[10px] font-mono font-bold bg-[#3A7A65]/20 text-[#5eead4] border border-[#3A7A65]/40">
         <CheckCircle2 className="h-3 w-3" />
         [VERIFIED]
       </span>
@@ -71,19 +70,19 @@ export function DealsTab({
   return (
     <div className="space-y-4">
       {/* Header Banner */}
-      <div className="p-4 bg-[#242424] border border-[#D95B28]/40 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="p-4 bg-[#242424] border border-[#3D3D3D] border-l-4 border-l-[#D95B28] rounded-none flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h3 className="text-sm font-bold text-[#F0F0F0]">Q1: What is the book worth?</h3>
-          <p className="text-xs text-[#999999] mt-0.5">
+          <h3 className="text-sm font-bold text-[#F0F0F0] uppercase tracking-wide font-mono">Q1: What is the book worth?</h3>
+          <p className="text-xs text-[#999999] mt-0.5 font-mono">
             Triangulating commercial deal potential against physical evidence, paperwork, and telemetry. Click any blocker for Forensic Reality Check.
           </p>
         </div>
-        <span className="text-xs font-mono font-bold bg-[#1A1A1A] px-2.5 py-1 rounded-lg text-[#EC7D42] border border-[#D95B28]/40 shadow-xs self-start sm:self-center">
+        <span className="text-xs font-mono font-bold bg-[#1A1A1A] px-2.5 py-1 text-[#EC7D42] border border-[#3D3D3D] rounded-none self-start sm:self-center">
           {deals.length} OPPORTUNITIES
         </span>
       </div>
 
-      <div className="space-y-3.5">
+      <div className="space-y-3">
         {deals.map((deal) => {
           const isExpanded = expandedDealId === deal.id;
           const evidenceList: string[] = Array.isArray(deal.evidence_ids) ? deal.evidence_ids : [];
@@ -94,20 +93,20 @@ export function DealsTab({
             <div
               key={deal.id}
               className={cn(
-                'bg-[#242424] rounded-2xl border shadow-lg shadow-black/20 overflow-hidden transition-all',
+                'bg-[#242424] rounded-none border transition-all',
                 forensic?.integrity === 'contradicted'
-                  ? 'border-[#F43F5E]/30 hover:border-[#F43F5E]/60'
-                  : 'border-[#3D3D3D] hover:border-[#D95B28]/50'
+                  ? 'border-[#F43F5E]/40 hover:border-[#F43F5E]'
+                  : 'border-[#3D3D3D] hover:border-[#D95B28]'
               )}
             >
               {/* Deal Card Header */}
               <div className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="space-y-2 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-mono text-xs font-bold text-[#EC7D42] bg-[#1A1A1A] px-2 py-0.5 rounded border border-[#3D3D3D]">
+                    <span className="font-mono text-xs font-bold text-[#EC7D42] bg-[#1A1A1A] px-2 py-0.5 border border-[#3D3D3D] rounded-none">
                       {deal.id}
                     </span>
-                    <h4 className="text-base font-bold text-[#F0F0F0]">{deal.title}</h4>
+                    <h4 className="text-sm font-bold text-[#F0F0F0] uppercase font-mono tracking-wide">{deal.title}</h4>
                     <Badge variant={deal.stage === 'agreed' ? 'cleared' : 'default'} size="sm">
                       {deal.stage.toUpperCase()}
                     </Badge>
@@ -116,7 +115,7 @@ export function DealsTab({
 
                   {/* Blocker & Smoking Gun Callout */}
                   {deal.blocker_text ? (
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 rounded-xl bg-[#1A1A1A] border border-[#3D3D3D]">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 bg-[#1A1A1A] border border-[#3D3D3D] rounded-none">
                       <div className="flex items-start gap-2 text-xs">
                         {isBlocked ? (
                           <AlertCircle className="h-4 w-4 text-[#F43F5E] shrink-0 mt-0.5" />
@@ -124,7 +123,7 @@ export function DealsTab({
                           <CheckCircle2 className="h-4 w-4 text-[#3A7A65] shrink-0 mt-0.5" />
                         )}
                         <div>
-                          <span className="font-semibold text-[#D6D6D6]">Blocker: </span>
+                          <span className="font-semibold text-[#D6D6D6] font-mono">Blocker: </span>
                           <span className={isBlocked ? 'text-[#fda4af] font-medium' : 'text-[#D6D6D6]'}>
                             {deal.blocker_text}
                           </span>
@@ -134,7 +133,7 @@ export function DealsTab({
                       {forensic && (
                         <button
                           onClick={() => onOpenForensicDrawer?.(deal.id)}
-                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-[#F43F5E]/15 hover:bg-[#F43F5E]/25 text-[#fda4af] border border-[#F43F5E]/40 transition-colors shrink-0 shadow-xs"
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono font-bold uppercase tracking-wider bg-[#F43F5E]/15 hover:bg-[#F43F5E]/25 text-[#fda4af] border border-[#F43F5E]/40 transition-colors shrink-0 rounded-none"
                         >
                           <Flame className="h-3 w-3 text-[#F43F5E]" />
                           <span>Smoking Gun Evidence</span>
@@ -143,7 +142,7 @@ export function DealsTab({
                       )}
                     </div>
                   ) : (
-                    <div className="text-xs text-[#5eead4] flex items-center gap-1.5 pt-1">
+                    <div className="text-xs text-[#5eead4] flex items-center gap-1.5 pt-1 font-mono">
                       <CheckCircle2 className="h-3.5 w-3.5" />
                       <span>No active blockers recorded</span>
                     </div>
@@ -151,7 +150,7 @@ export function DealsTab({
 
                   {/* Deadline info */}
                   {deal.deadline_text && (
-                    <div className="flex items-center gap-1.5 text-xs text-[#fde047] pt-0.5">
+                    <div className="flex items-center gap-1.5 text-xs text-[#fde047] pt-0.5 font-mono">
                       <Clock className="h-3.5 w-3.5 shrink-0" />
                       <span>
                         <strong>Deadline alert:</strong> {deal.deadline_text}
@@ -163,7 +162,7 @@ export function DealsTab({
                 {/* Deal Worth & Actions */}
                 <div className="flex items-center justify-between md:flex-col md:items-end gap-2.5 shrink-0 border-t md:border-t-0 pt-3 md:pt-0 border-[#3D3D3D]">
                   <div className="text-right">
-                    <div className="text-[10px] uppercase font-semibold text-[#8A8A8A]">worth_up_to</div>
+                    <div className="text-[10px] uppercase font-mono font-semibold text-[#8A8A8A]">worth_up_to</div>
                     <div className="text-xl font-bold font-mono text-[#F0F0F0]">
                       {formatCurrency(deal.worth_up_to)}
                     </div>
@@ -173,7 +172,7 @@ export function DealsTab({
                     {forensic && (
                       <button
                         onClick={() => onOpenForensicDrawer?.(deal.id)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-[#EC7D42] bg-[#D95B28]/15 hover:bg-[#D95B28]/25 border border-[#D95B28]/40 transition-colors"
+                        className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-mono font-bold uppercase tracking-wider text-[#EC7D42] bg-[#1A1A1A] hover:bg-[#2E2E2E] border border-[#D95B28]/40 transition-colors rounded-none"
                       >
                         <FileSearch className="h-3.5 w-3.5" />
                         <span>Forensic Reality Check</span>
@@ -181,7 +180,7 @@ export function DealsTab({
                     )}
                     <button
                       onClick={() => toggleExpand(deal.id)}
-                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-[#D6D6D6] bg-[#2E2E2E] hover:bg-[#3D3D3D] border border-[#3D3D3D] transition-colors"
+                      className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-mono font-bold uppercase tracking-wider text-[#D6D6D6] bg-[#2E2E2E] hover:bg-[#3D3D3D] border border-[#3D3D3D] transition-colors rounded-none"
                     >
                       <span>Evidence ({evidenceList.length})</span>
                       {isExpanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
@@ -192,13 +191,13 @@ export function DealsTab({
 
               {/* Evidence Traceability Dropdown / Tray */}
               {isExpanded && (
-                <div className="px-5 pb-5 pt-3 border-t border-[#3D3D3D] bg-[#1A1A1A] space-y-3 animate-in fade-in duration-150">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-[#D6D6D6] uppercase tracking-wider text-[11px]">
+                <div className="px-5 pb-5 pt-3 border-t border-[#3D3D3D] bg-[#1A1A1A] space-y-3">
+                  <div className="flex items-center justify-between text-xs font-mono">
+                    <span className="font-bold text-[#D6D6D6] uppercase tracking-wider text-[10px]">
                       Substantiating Evidence & Facts ({evidenceList.length} items)
                     </span>
-                    <span className="text-[11px] text-[#8A8A8A]">
-                      Click any fact to inspect credibility details
+                    <span className="text-[10px] text-[#8A8A8A]">
+                      Click fact to inspect credibility details
                     </span>
                   </div>
 
@@ -211,9 +210,9 @@ export function DealsTab({
                           <div
                             key={evId}
                             onClick={() => onInspectEvidence?.(evId)}
-                            className="p-3 rounded-xl bg-[#242424] hover:bg-[#2E2E2E] border border-[#3D3D3D] flex items-center justify-between text-xs cursor-pointer"
+                            className="p-3 bg-[#242424] hover:bg-[#2E2E2E] border border-[#3D3D3D] flex items-center justify-between text-xs cursor-pointer rounded-none font-mono"
                           >
-                            <span className="font-mono text-xs text-[#EC7D42]">[{evId}]</span>
+                            <span className="text-xs text-[#EC7D42]">[{evId}]</span>
                             <Badge variant="unknown" size="sm">UNREGISTERED FILE/EVIDENCE</Badge>
                           </div>
                         );
@@ -223,18 +222,18 @@ export function DealsTab({
                         <div
                           key={evId}
                           onClick={() => onInspectEvidence?.(evId)}
-                          className="p-3.5 rounded-xl bg-[#242424] hover:bg-[#2E2E2E] border border-[#3D3D3D] hover:border-[#D95B28]/60 transition-all cursor-pointer shadow-xs space-y-1.5"
+                          className="p-3 bg-[#242424] hover:bg-[#2E2E2E] border border-[#3D3D3D] hover:border-[#D95B28]/60 transition-all cursor-pointer rounded-none space-y-1.5"
                         >
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-2">
-                              <span className="font-mono text-xs font-bold text-[#EC7D42] bg-[#1A1A1A] px-1.5 py-0.2 rounded border border-[#3D3D3D]">
+                              <span className="font-mono text-xs font-bold text-[#EC7D42] bg-[#1A1A1A] px-1.5 py-0.2 border border-[#3D3D3D] rounded-none">
                                 {fact.id}
                               </span>
                               <Badge variant={fact.status} size="sm">
                                 {fact.status.toUpperCase()}
                               </Badge>
                             </div>
-                            <span className="text-[11px] text-[#999999] font-medium">
+                            <span className="text-[11px] text-[#999999] font-mono">
                               Source: <strong className="text-[#F0F0F0]">{fact.said_by || 'Document'}</strong>
                             </span>
                           </div>

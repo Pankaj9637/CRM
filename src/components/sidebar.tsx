@@ -100,17 +100,17 @@ export function Sidebar({ onOpenNoteWriter, onOpenCopilot }: SidebarProps) {
       {/* Brand Header */}
       <div className="p-5 border-b border-[#3D3D3D]">
         <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-[#A33D14] via-[#D95B28] to-[#EC7D42] flex items-center justify-center shadow-lg shadow-[#D95B28]/25">
+          <div className="h-9 w-9 bg-[#D95B28] flex items-center justify-center border border-[#A33D14] text-white">
             <Sparkles className="h-5 w-5 text-white" />
           </div>
           <div>
             <div className="flex items-center gap-1.5">
               <span className="font-bold text-lg tracking-wider text-[#F0F0F0]">NEXUS</span>
-              <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-[#D95B28]/20 text-[#EC7D42] border border-[#D95B28]/40">
-                EMBER
+              <span className="text-[10px] uppercase font-mono font-bold px-1.5 py-0.5 bg-[#D95B28]/20 text-[#EC7D42] border border-[#D95B28]/40">
+                TERMINAL
               </span>
             </div>
-            <p className="text-xs text-[#999999] font-medium">Account Intelligence</p>
+            <p className="text-xs text-[#999999] font-medium font-mono">Account Intelligence</p>
           </div>
         </div>
       </div>
@@ -118,7 +118,7 @@ export function Sidebar({ onOpenNoteWriter, onOpenCopilot }: SidebarProps) {
       {/* Main Navigation */}
       <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
         <div>
-          <div className="px-3 mb-2 text-[11px] font-semibold tracking-wider text-[#999999] uppercase">
+          <div className="px-3 mb-2 text-[10px] font-mono font-bold tracking-wider text-[#999999] uppercase">
             Intelligence Hub
           </div>
           <nav className="space-y-1">
@@ -129,10 +129,10 @@ export function Sidebar({ onOpenNoteWriter, onOpenCopilot }: SidebarProps) {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+                    'flex items-center gap-3 px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors border',
                     item.active
-                      ? 'bg-[#2E2E2E] text-[#F0F0F0] border border-[#3D3D3D] shadow-sm'
-                      : 'text-[#999999] hover:text-[#F0F0F0] hover:bg-[#242424]'
+                      ? 'bg-[#2E2E2E] text-[#F0F0F0] border-[#D95B28] border-l-2'
+                      : 'border-transparent text-[#999999] hover:text-[#F0F0F0] hover:bg-[#242424]'
                   )}
                 >
                   <Icon className={cn('h-4 w-4', item.active ? 'text-[#D95B28]' : 'text-[#999999]')} />
@@ -145,7 +145,7 @@ export function Sidebar({ onOpenNoteWriter, onOpenCopilot }: SidebarProps) {
 
         {/* Dynamic Accounts deep dive links */}
         <div>
-          <div className="px-3 mb-2 flex items-center justify-between text-[11px] font-semibold tracking-wider text-[#999999] uppercase">
+          <div className="px-3 mb-2 flex items-center justify-between text-[10px] font-mono font-bold tracking-wider text-[#999999] uppercase">
             <span>Portfolio</span>
             <span className="text-[#999999] font-mono text-[10px]">
               {dynamicAccounts.length} ACCOUNTS
@@ -167,14 +167,14 @@ export function Sidebar({ onOpenNoteWriter, onOpenCopilot }: SidebarProps) {
                   key={acc.id}
                   href={href}
                   className={cn(
-                    'group flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-medium transition-all',
+                    'group flex items-center justify-between px-3 py-2 text-xs font-medium transition-all border',
                     active
-                      ? 'bg-[#2E2E2E] text-[#F0F0F0] border border-[#D95B28]/60 shadow-sm'
-                      : 'text-[#999999] hover:text-[#F0F0F0] hover:bg-[#242424]'
+                      ? 'bg-[#2E2E2E] text-[#F0F0F0] border-[#D95B28] border-l-2'
+                      : 'border-transparent text-[#999999] hover:text-[#F0F0F0] hover:bg-[#242424]'
                   )}
                 >
                   <div className="flex items-center gap-2 truncate">
-                    <span className={cn('w-5 h-5 rounded flex items-center justify-center font-mono font-bold text-[11px] border', badgeColor)}>
+                    <span className={cn('w-5 h-5 flex items-center justify-center font-mono font-bold text-[11px] border shrink-0', badgeColor)}>
                       {acc.id}
                     </span>
                     <span className="truncate">{acc.name}</span>
@@ -190,30 +190,30 @@ export function Sidebar({ onOpenNoteWriter, onOpenCopilot }: SidebarProps) {
 
         {/* Quick Tools */}
         <div>
-          <div className="px-3 mb-2 text-[11px] font-semibold tracking-wider text-[#999999] uppercase">
+          <div className="px-3 mb-2 text-[10px] font-mono font-bold tracking-wider text-[#999999] uppercase">
             Actions
           </div>
           <div className="space-y-2 px-1">
             <button
               onClick={handleSync}
               disabled={syncing}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium bg-[#242424] hover:bg-[#2E2E2E] text-[#EC7D42] hover:text-white border border-[#D95B28]/40 transition-colors shadow-sm"
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold uppercase tracking-wider bg-[#242424] hover:bg-[#2E2E2E] text-[#EC7D42] hover:text-white border border-[#D95B28]/40 transition-colors"
             >
               <RotateCw className={cn('h-3.5 w-3.5 text-[#D95B28]', syncing && 'animate-spin')} />
-              <span>{syncing ? 'Auto-Discovering...' : 'Dynamic Sync (MCP)'}</span>
+              <span>{syncing ? 'Discovering...' : 'Dynamic Sync (MCP)'}</span>
             </button>
             <button
               onClick={onOpenNoteWriter}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium bg-[#242424] hover:bg-[#2E2E2E] text-[#D6D6D6] hover:text-white border border-[#3D3D3D] transition-colors shadow-sm"
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold uppercase tracking-wider bg-[#242424] hover:bg-[#2E2E2E] text-[#D6D6D6] hover:text-white border border-[#3D3D3D] transition-colors"
             >
               <PenLine className="h-3.5 w-3.5 text-[#D95B28]" />
               <span>Write Note (MCP Sync)</span>
             </button>
             <button
               onClick={onOpenCopilot}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold bg-gradient-to-r from-[#D95B28] to-[#EC7D42] hover:from-[#A33D14] hover:to-[#D95B28] text-white shadow-md shadow-[#D95B28]/20 transition-all"
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-bold uppercase tracking-wider bg-[#D95B28] hover:bg-[#A33D14] text-white border border-[#A33D14] transition-all"
             >
-              <Sparkles className="h-3.5 w-3.5 text-white animate-pulse" />
+              <Sparkles className="h-3.5 w-3.5 text-white" />
               <span>Ask NEXUS Copilot</span>
             </button>
           </div>
@@ -222,34 +222,34 @@ export function Sidebar({ onOpenNoteWriter, onOpenCopilot }: SidebarProps) {
 
       {/* System Status & Footer */}
       <div className="p-3 border-t border-[#3D3D3D] bg-[#1A1A1A] space-y-2">
-        <div className="bg-[#242424] rounded-lg p-2.5 border border-[#3D3D3D] text-[11px] space-y-1.5">
+        <div className="bg-[#242424] p-2.5 border border-[#3D3D3D] text-[11px] space-y-1.5 font-mono">
           <div className="flex items-center justify-between text-[#D6D6D6]">
             <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-[#3A7A65] animate-pulse" />
+              <span className="h-2 w-2 bg-[#3A7A65]" />
               <span>MCP Protocol</span>
             </span>
-            <span className="font-mono text-[10px] text-[#5eead4]">ONLINE</span>
+            <span className="text-[10px] text-[#5eead4] font-bold">ONLINE</span>
           </div>
           <div className="flex items-center justify-between text-[#D6D6D6]">
             <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-[#D95B28]" />
+              <span className="h-2 w-2 bg-[#D95B28]" />
               <span>Gemini 2.5 Flash</span>
             </span>
-            <span className="font-mono text-[10px] text-[#EC7D42]">READY</span>
+            <span className="text-[10px] text-[#EC7D42] font-bold">READY</span>
           </div>
           <div className="flex items-center justify-between text-[#D6D6D6]">
             <span className="flex items-center gap-1.5">
               <Database className="h-3 w-3 text-[#3E6F9E]" />
               <span>Turso/SQLite</span>
             </span>
-            <span className="font-mono text-[10px] text-[#7dd3fc]">ACTIVE</span>
+            <span className="text-[10px] text-[#7dd3fc] font-bold">ACTIVE</span>
           </div>
         </div>
 
         <button
           onClick={handleSeed}
           disabled={seeding}
-          className="w-full flex items-center justify-center gap-1.5 py-1.5 text-[11px] font-medium text-[#999999] hover:text-[#F0F0F0] transition-colors"
+          className="w-full flex items-center justify-center gap-1.5 py-1.5 text-[11px] font-mono text-[#999999] hover:text-[#F0F0F0] border border-[#3D3D3D] bg-[#242424] hover:bg-[#2E2E2E] transition-colors"
         >
           <RefreshCw className={cn('h-3 w-3', seeding && 'animate-spin text-[#D95B28]')} />
           <span>{seeding ? 'Seeding Database...' : 'Re-Seed Database'}</span>

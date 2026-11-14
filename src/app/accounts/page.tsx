@@ -64,12 +64,12 @@ export default function AccountsPage() {
           <button
             onClick={handleSync}
             disabled={syncing}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#242424] hover:bg-[#2E2E2E] text-xs font-semibold text-[#EC7D42] border border-[#D95B28]/40 shadow-xs transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-none bg-[#242424] hover:bg-[#2E2E2E] text-xs font-semibold text-[#EC7D42] border border-[#D95B28]/40 transition-colors"
           >
             <RotateCw className={`h-3.5 w-3.5 text-[#D95B28] ${syncing ? 'animate-spin' : ''}`} />
             <span>{syncing ? 'Discovering...' : 'Dynamic Sync (MCP)'}</span>
           </button>
-          <span className="text-xs font-mono font-bold bg-[#242424] px-3 py-1.5 rounded-xl text-[#D6D6D6] border border-[#3D3D3D] shadow-xs">
+          <span className="text-xs font-mono font-bold bg-[#242424] px-3 py-1.5 rounded-none text-[#D6D6D6] border border-[#3D3D3D]">
             {accounts.length} ACTIVE CUSTOMERS
           </span>
         </div>
@@ -79,12 +79,12 @@ export default function AccountsPage() {
         {accounts.map((acc) => (
           <div
             key={acc.id}
-            className="bg-[#242424] rounded-2xl border border-[#3D3D3D] shadow-lg shadow-black/20 hover:border-[#D95B28] transition-all overflow-hidden flex flex-col justify-between"
+            className="bg-[#242424] rounded-none border border-[#3D3D3D] hover:border-[#D95B28] transition-all overflow-hidden flex flex-col justify-between"
           >
             <div className="p-6 space-y-4">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <span className="w-10 h-10 rounded-xl bg-[#1A1A1A] text-[#EC7D42] border border-[#D95B28]/40 font-mono font-bold text-base flex items-center justify-center shadow-sm">
+                  <span className="w-10 h-10 rounded-none bg-[#1A1A1A] text-[#EC7D42] border border-[#D95B28]/40 font-mono font-bold text-base flex items-center justify-center">
                     {acc.id}
                   </span>
                   <div>
@@ -99,13 +99,13 @@ export default function AccountsPage() {
               </div>
 
               {/* Official Story quote */}
-              <div className="p-3.5 bg-[#1A1A1A] rounded-xl border border-[#3D3D3D] text-xs text-[#D6D6D6] leading-relaxed font-normal min-h-[4rem]">
+              <div className="p-3.5 bg-[#1A1A1A] rounded-none border border-[#3D3D3D] text-xs text-[#D6D6D6] leading-relaxed font-normal min-h-[4rem]">
                 &ldquo;{acc.official_story}&rdquo;
               </div>
 
               {/* Metrics Grid */}
               <div className="grid grid-cols-2 gap-2 pt-1">
-                <div className="p-2.5 rounded-xl bg-[#2E2E2E] border border-[#3D3D3D]">
+                <div className="p-2.5 rounded-none bg-[#2E2E2E] border border-[#3D3D3D]">
                   <div className="text-[10px] font-semibold text-[#8A8A8A] uppercase flex items-center gap-1">
                     <Briefcase className="h-3 w-3 text-[#EC7D42]" />
                     <span>Pipeline</span>
@@ -116,7 +116,7 @@ export default function AccountsPage() {
                   <div className="text-[10px] text-[#999999]">{acc.dealsCount} deals</div>
                 </div>
 
-                <div className="p-2.5 rounded-xl bg-[#3A7A65]/10 border border-[#3A7A65]/30">
+                <div className="p-2.5 rounded-none bg-[#3A7A65]/10 border border-[#3A7A65]/30">
                   <div className="text-[10px] font-semibold text-[#5eead4] uppercase flex items-center gap-1">
                     <Award className="h-3 w-3 text-[#3A7A65]" />
                     <span>Won Offers</span>
@@ -127,7 +127,7 @@ export default function AccountsPage() {
                   <div className="text-[10px] text-[#5eead4]/80">Closed wins</div>
                 </div>
 
-                <div className="p-2.5 rounded-xl bg-[#F43F5E]/10 border border-[#F43F5E]/30">
+                <div className="p-2.5 rounded-none bg-[#F43F5E]/10 border border-[#F43F5E]/30">
                   <div className="text-[10px] font-semibold text-[#fda4af] uppercase flex items-center gap-1">
                     <AlertTriangle className="h-3 w-3 text-[#F43F5E]" />
                     <span>Blocked Deals</span>
@@ -138,7 +138,7 @@ export default function AccountsPage() {
                   <div className="text-[10px] text-[#fda4af]/80">Open blockers</div>
                 </div>
 
-                <div className="p-2.5 rounded-xl bg-[#2E2E2E] border border-[#3D3D3D]">
+                <div className="p-2.5 rounded-none bg-[#2E2E2E] border border-[#3D3D3D]">
                   <div className="text-[10px] font-semibold text-[#8A8A8A] uppercase flex items-center gap-1">
                     <Users className="h-3 w-3 text-[#999999]" />
                     <span>Contacts</span>
@@ -158,7 +158,7 @@ export default function AccountsPage() {
               </span>
               <Link
                 href={`/accounts/${acc.id}`}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#D95B28] hover:bg-[#A33D14] text-white rounded-xl text-xs font-semibold shadow-md shadow-[#D95B28]/25 transition-all"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#D95B28] hover:bg-[#A33D14] text-white rounded-none text-xs font-semibold transition-all border border-[#D95B28]"
               >
                 <span>Enter Deep Dive</span>
                 <ArrowRight className="h-3.5 w-3.5" />
