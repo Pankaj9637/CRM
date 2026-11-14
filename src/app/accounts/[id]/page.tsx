@@ -220,13 +220,13 @@ export default function AccountDetailPage() {
 
   const { account, contacts, facts, deals, offers, actions, risks, unknowns, deal_contacts } = data;
 
-  const tabs: { key: TabKey; label: string; question: string; icon: any; count?: number }[] = [
-    { key: 'overview', label: 'Overview', question: 'Executive Summary', icon: Layers },
-    { key: 'deals', label: 'Deals', question: 'Q1: What is the book worth?', icon: Building2, count: deals.length },
-    { key: 'people', label: 'People & Power', question: 'Q2: Who has the power?', icon: Users, count: contacts.length },
-    { key: 'actions', label: 'Actions', question: 'Q3: What should happen next?', icon: Zap, count: actions.length },
-    { key: 'risks', label: 'Risks', question: 'Q4: What is at risk?', icon: ShieldAlert, count: risks.length },
-    { key: 'evidence', label: 'Evidence & Forensic', question: 'Q5: What don\'t we know?', icon: FileSearch, count: unknowns.length },
+  const tabs: { key: TabKey; label: string; icon: any; count?: number }[] = [
+    { key: 'overview', label: 'Overview', icon: Layers },
+    { key: 'deals', label: 'Deals', icon: Building2, count: deals.length },
+    { key: 'people', label: 'People & Power', icon: Users, count: contacts.length },
+    { key: 'actions', label: 'Actions', icon: Zap, count: actions.length },
+    { key: 'risks', label: 'Risks', icon: ShieldAlert, count: risks.length },
+    { key: 'evidence', label: 'Evidence & Forensic', icon: FileSearch, count: unknowns.length },
   ];
 
   return (

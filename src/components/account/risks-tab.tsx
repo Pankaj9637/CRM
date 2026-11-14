@@ -16,15 +16,12 @@ export function RisksTab({ risks, deals, onInspectEvidence }: RisksTabProps) {
 
   return (
     <div className="space-y-4">
-      {/* Question Header */}
-      <div className="p-4 bg-[#242424] border border-[#3D3D3D] border-l-4 border-l-[#D95B28] rounded-none flex items-center justify-between">
-        <div>
-          <h3 className="text-sm font-bold text-[#F0F0F0]">Q4: What is at risk?</h3>
-          <p className="text-xs text-[#999999] mt-0.5">
-            Vulnerabilities identified across stalled DPIAs, unverified ROI models, and key-person departures.
-          </p>
-        </div>
-        <span className="text-xs font-mono font-bold bg-[#1A1A1A] px-2.5 py-1 rounded-none text-[#fda4af] border border-[#F43F5E]/40">
+      {/* Header Banner */}
+      <div className="p-4 bg-[#242424] border border-[#3D3D3D] border-l-4 border-l-[#D95B28] rounded-none flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <p className="text-xs text-[#D6D6D6] leading-relaxed">
+          Vulnerabilities identified across stalled DPIAs, unverified ROI models, and key-person departures.
+        </p>
+        <span className="text-xs font-mono font-bold bg-[#1A1A1A] px-2.5 py-1 rounded-none text-[#fda4af] border border-[#F43F5E]/40 shrink-0 self-start sm:self-center">
           {risks.length} IDENTIFIED THREATS
         </span>
       </div>

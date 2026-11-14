@@ -30,15 +30,12 @@ export function PeopleTab({ contacts, deals, dealContacts, onInspectEvidence, on
 
   return (
     <div className="space-y-6">
-      {/* Question Header */}
+      {/* Header Banner */}
       <div className="p-4 bg-[#242424] border border-[#3D3D3D] border-l-4 border-l-[#D95B28] rounded-none flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h3 className="text-sm font-bold text-[#F0F0F0]">Q2: Who has the power?</h3>
-          <p className="text-xs text-[#999999] mt-0.5">
-            Stakeholder persona directory with platform telemetry, engagement meters, deal responsibilities, and hot-button pain points.
-          </p>
-        </div>
-        <span className="text-xs font-mono font-bold bg-[#1A1A1A] px-2.5 py-1 rounded-none text-[#EC7D42] border border-[#3D3D3D] flex items-center gap-1.5 self-start sm:self-center">
+        <p className="text-xs text-[#D6D6D6] leading-relaxed">
+          Stakeholder persona directory with platform telemetry, engagement meters, deal responsibilities, and hot-button pain points.
+        </p>
+        <span className="text-xs font-mono font-bold bg-[#1A1A1A] px-2.5 py-1 rounded-none text-[#EC7D42] border border-[#3D3D3D] flex items-center gap-1.5 self-start sm:self-center shrink-0">
           <Sparkles className="h-3 w-3 text-[#D95B28]" />
           <span>STAKEHOLDER POWER MAP</span>
         </span>

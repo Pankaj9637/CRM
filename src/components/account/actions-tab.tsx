@@ -13,15 +13,12 @@ interface ActionsTabProps {
 export function ActionsTab({ actions, onInspectEvidence }: ActionsTabProps) {
   return (
     <div className="space-y-4">
-      {/* Question Header */}
-      <div className="p-4 bg-[#242424] border border-[#3D3D3D] border-l-4 border-l-[#D95B28] rounded-none flex items-center justify-between">
-        <div>
-          <h3 className="text-sm font-bold text-[#F0F0F0]">Q3: What should happen next?</h3>
-          <p className="text-xs text-[#999999] mt-0.5">
-            Recommended moves ranked by deal value at risk and stakeholder responsiveness.
-          </p>
-        </div>
-        <span className="text-xs font-mono font-bold bg-[#1A1A1A] px-2.5 py-1 text-[#EC7D42] border border-[#3D3D3D] rounded-none">
+      {/* Header Banner */}
+      <div className="p-4 bg-[#242424] border border-[#3D3D3D] border-l-4 border-l-[#D95B28] rounded-none flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <p className="text-xs text-[#D6D6D6] leading-relaxed">
+          Recommended moves ranked by deal value at risk and stakeholder responsiveness.
+        </p>
+        <span className="text-xs font-mono font-bold bg-[#1A1A1A] px-2.5 py-1 text-[#EC7D42] border border-[#3D3D3D] rounded-none shrink-0 self-start sm:self-center">
           {actions.length} ACTIONS FOR THIS ACCOUNT
         </span>
       </div>

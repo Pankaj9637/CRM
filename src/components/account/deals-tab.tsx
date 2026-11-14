@@ -71,13 +71,10 @@ export function DealsTab({
     <div className="space-y-4">
       {/* Header Banner */}
       <div className="p-4 bg-[#242424] border border-[#3D3D3D] border-l-4 border-l-[#D95B28] rounded-none flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h3 className="text-sm font-bold text-[#F0F0F0] uppercase tracking-wide font-mono">Q1: What is the book worth?</h3>
-          <p className="text-xs text-[#999999] mt-0.5 font-mono">
-            Triangulating commercial deal potential against physical evidence, paperwork, and telemetry. Click any blocker for Forensic Reality Check.
-          </p>
-        </div>
-        <span className="text-xs font-mono font-bold bg-[#1A1A1A] px-2.5 py-1 text-[#EC7D42] border border-[#3D3D3D] rounded-none self-start sm:self-center">
+        <p className="text-xs text-[#D6D6D6] font-mono leading-relaxed">
+          Triangulating commercial deal potential against physical evidence, paperwork, and telemetry. Click any blocker for Forensic Reality Check.
+        </p>
+        <span className="text-xs font-mono font-bold bg-[#1A1A1A] px-2.5 py-1 text-[#EC7D42] border border-[#3D3D3D] rounded-none self-start sm:self-center shrink-0">
           {deals.length} OPPORTUNITIES
         </span>
       </div>
