@@ -3,17 +3,26 @@ const MCP_TOKEN = process.env.MCP_TOKEN || process.env.MCP_CONNECTOR || '';
 
 let lastCallTime = 0;
 
-export async function callMCP(toolName: string, args: Record<string, any> = {}) {
-  // Rate limit: 1 call per minute
+export async function callMCP(
+  toolName: string, 
+  args: Record<string, any> = {}, 
+  options: { noWait?: boolean; timeoutMs?: number } = {}
+) {
+  const { noWait = false, timeoutMs = 8000 } = options;
+
+  // Rate limit handling
   const now = Date.now();
   const elapsed = now - lastCallTime;
-  if (elapsed < 60000 && lastCallTime > 0) {
-    const wait = 60000 - elapsed;
-    await new Promise(r => setTimeout(r, wait));
+  if (!noWait && elapsed < 60000 && lastCallTime > 0) {
+    const wait = Math.min(60000 - elapsed, 5000); // Wait at most 5s in web routes
+    await new Promise((r) => setTimeout(r, wait));
   }
   lastCallTime = Date.now();
 
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
     const res = await fetch(MCP_ENDPOINT, {
       method: 'POST',
       headers: {
@@ -26,7 +35,10 @@ export async function callMCP(toolName: string, args: Record<string, any> = {}) 
         params: { name: toolName, arguments: args },
         id: Date.now(),
       }),
+      signal: controller.signal,
     });
+
+    clearTimeout(timeout);
 
     if (!res.ok) {
       const errText = await res.text();

@@ -10,9 +10,11 @@ import { ActionsTab } from '@/components/account/actions-tab';
 import { RisksTab } from '@/components/account/risks-tab';
 import { EvidenceTab } from '@/components/account/evidence-tab';
 import { EvidenceInspectorModal, FactData } from '@/components/evidence-inspector';
+import { ForensicDrawer } from '@/components/forensic-drawer';
 import { NoteWriterModal } from '@/components/note-writer-modal';
 import { CopilotDrawer } from '@/components/copilot-drawer';
 import { Badge } from '@/components/badge';
+import { FORENSIC_RECORDS, ForensicEvidenceRecord } from '@/lib/intelligence-data';
 import { 
   Building2, 
   ArrowLeft, 
@@ -24,7 +26,8 @@ import {
   Zap, 
   ShieldAlert, 
   FileSearch,
-  AlertTriangle
+  AlertTriangle,
+  RotateCw
 } from 'lucide-react';
 
 type TabKey = 'overview' | 'deals' | 'people' | 'actions' | 'risks' | 'evidence';
@@ -35,14 +38,35 @@ export default function AccountDetailPage() {
   const accountId = (params.id as string)?.toUpperCase() || 'A';
 
   const [data, setData] = useState<any>(null);
+  const [allAccounts, setAllAccounts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabKey>('overview');
 
   const [inspectFact, setInspectFact] = useState<FactData | null>(null);
   const [isInspectorOpen, setIsInspectorOpen] = useState(false);
+  const [selectedForensicRecord, setSelectedForensicRecord] = useState<ForensicEvidenceRecord | null>(null);
+  const [isForensicOpen, setIsForensicOpen] = useState(false);
   const [isNoteWriterOpen, setIsNoteWriterOpen] = useState(false);
   const [isCopilotOpen, setIsCopilotOpen] = useState(false);
+
+  // Fetch all accounts dynamically for the switcher
+  const fetchAllAccounts = async () => {
+    try {
+      const res = await fetch('/api/accounts');
+      if (res.ok) {
+        const json = await res.json();
+        if (Array.isArray(json)) {
+          setAllAccounts(json);
+        } else if (Array.isArray(json.accounts)) {
+          setAllAccounts(json.accounts);
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to fetch accounts list:', e);
+    }
+  };
 
   const fetchAccountDetail = async () => {
     try {
@@ -63,9 +87,56 @@ export default function AccountDetailPage() {
     }
   };
 
+  const handleSyncAccount = async () => {
+    try {
+      setSyncing(true);
+      const res = await fetch('/api/sync', { method: 'POST' });
+      const json = await res.json();
+      if (json.success) {
+        await Promise.all([fetchAccountDetail(), fetchAllAccounts()]);
+      }
+    } catch (e) {
+      console.warn('Sync failed:', e);
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   useEffect(() => {
+    fetchAllAccounts();
     fetchAccountDetail();
   }, [accountId]);
+
+  // Handle forensic reality check drawer opening
+  const handleOpenForensicDrawer = (dealId: string) => {
+    const record = FORENSIC_RECORDS[dealId];
+    if (record) {
+      setSelectedForensicRecord(record);
+      setIsForensicOpen(true);
+    } else {
+      const deal = data?.deals?.find((d: any) => d.id === dealId);
+      if (deal) {
+        setSelectedForensicRecord({
+          dealId: deal.id,
+          dealTitle: deal.title,
+          accountId: deal.account_id || accountId,
+          claimedValue: deal.worth_up_to || 0,
+          integrity: deal.blocker_status === 'open' ? 'contradicted' : 'verified',
+          claimText: deal.blocker_text ? `Claimed blocker: ${deal.blocker_text}` : 'Operational rollout progressing according to plan.',
+          claimedBy: 'Account Lead',
+          realityText: deal.blocker_text ? `Unresolved blocker identified: ${deal.blocker_text}` : 'Backed by recorded system files and logs.',
+          sourceDocId: 'System File / Telemetry Log',
+          sourceDocType: 'contract',
+          verbatimExcerpt: `Opportunity: ${deal.title}\nBlocker: ${deal.blocker_text || 'None'}\nStage: ${deal.stage}\nValue: $${(deal.worth_up_to || 0).toLocaleString()}`,
+          actionableUnlock: `Clear blocker to unblock ${deal.title} and secure $${(deal.worth_up_to || 0).toLocaleString()} pipeline value.`,
+          actionContact: 'Account Lead',
+          unlockValue: deal.worth_up_to || 0,
+          evidenceIds: Array.isArray(deal.evidence_ids) ? deal.evidence_ids : [],
+        });
+        setIsForensicOpen(true);
+      }
+    }
+  };
 
   // Handle evidence inspection
   const handleInspectEvidence = (evidenceId: string) => {
@@ -128,6 +199,14 @@ export default function AccountDetailPage() {
           >
             Retry Request
           </button>
+          <button
+            onClick={handleSyncAccount}
+            disabled={syncing}
+            className="px-4 py-2 text-xs font-semibold bg-[#2E2E2E] hover:bg-[#3D3D3D] text-[#EC7D42] rounded-xl border border-[#D95B28]/40 transition-colors flex items-center gap-1.5"
+          >
+            <RotateCw className={`h-3 w-3 ${syncing ? 'animate-spin' : ''}`} />
+            <span>Sync from MCP</span>
+          </button>
           <Link
             href="/accounts"
             className="inline-block px-4 py-2 text-xs font-semibold bg-[#D95B28] hover:bg-[#A33D14] text-white rounded-xl shadow-md shadow-[#D95B28]/25 transition-all"
@@ -147,12 +226,12 @@ export default function AccountDetailPage() {
     { key: 'people', label: 'People & Power', question: 'Q2: Who has the power?', icon: Users, count: contacts.length },
     { key: 'actions', label: 'Actions', question: 'Q3: What should happen next?', icon: Zap, count: actions.length },
     { key: 'risks', label: 'Risks', question: 'Q4: What is at risk?', icon: ShieldAlert, count: risks.length },
-    { key: 'evidence', label: 'Evidence & Unknowns', question: 'Q5: What don\'t we know?', icon: FileSearch, count: unknowns.length },
+    { key: 'evidence', label: 'Evidence & Forensic', question: 'Q5: What don\'t we know?', icon: FileSearch, count: unknowns.length },
   ];
 
   return (
     <div className="space-y-6">
-      {/* Top Breadcrumb & Switcher */}
+      {/* Top Breadcrumb & Dynamic Switcher */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-2 text-xs">
           <Link href="/accounts" className="text-[#999999] hover:text-[#F0F0F0] font-medium flex items-center gap-1 transition-colors">
@@ -163,29 +242,22 @@ export default function AccountDetailPage() {
           <span className="font-semibold text-[#F0F0F0]">{account.name}</span>
         </div>
 
-        {/* Quick Account Switcher Pill */}
-        <div className="flex items-center gap-1.5 p-1 bg-[#242424] border border-[#3D3D3D] rounded-xl shadow-xs self-start">
-          <span className="text-[11px] font-semibold text-[#8A8A8A] px-2 uppercase">Switch:</span>
-          <button
-            onClick={() => router.push('/accounts/A')}
-            className={`px-3 py-1 text-xs font-bold rounded-lg transition-colors ${
-              accountId === 'A'
-                ? 'bg-[#D95B28] text-white shadow-sm'
-                : 'text-[#D6D6D6] hover:bg-[#2E2E2E]'
-            }`}
-          >
-            A: Eastern Counties
-          </button>
-          <button
-            onClick={() => router.push('/accounts/B')}
-            className={`px-3 py-1 text-xs font-bold rounded-lg transition-colors ${
-              accountId === 'B'
-                ? 'bg-[#D95B28] text-white shadow-sm'
-                : 'text-[#D6D6D6] hover:bg-[#2E2E2E]'
-            }`}
-          >
-            B: Aldermoor Group
-          </button>
+        {/* Dynamic Account Switcher Pill */}
+        <div className="flex items-center gap-1.5 p-1 bg-[#242424] border border-[#3D3D3D] rounded-xl shadow-xs self-start overflow-x-auto max-w-full">
+          <span className="text-[11px] font-semibold text-[#8A8A8A] px-2 uppercase shrink-0">Switch:</span>
+          {allAccounts.map((acc) => (
+            <button
+              key={acc.id}
+              onClick={() => router.push(`/accounts/${acc.id}`)}
+              className={`px-3 py-1 text-xs font-bold rounded-lg transition-colors whitespace-nowrap ${
+                accountId === acc.id
+                  ? 'bg-[#D95B28] text-white shadow-sm'
+                  : 'text-[#D6D6D6] hover:bg-[#2E2E2E]'
+              }`}
+            >
+              {acc.id}: {acc.name}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -279,6 +351,7 @@ export default function AccountDetailPage() {
             deals={deals}
             facts={facts}
             onInspectEvidence={handleInspectEvidence}
+            onOpenForensicDrawer={handleOpenForensicDrawer}
           />
         )}
 
@@ -287,6 +360,8 @@ export default function AccountDetailPage() {
             contacts={contacts}
             deals={deals}
             dealContacts={deal_contacts}
+            onInspectEvidence={handleInspectEvidence}
+            onOpenNoteWriter={() => setIsNoteWriterOpen(true)}
           />
         )}
 
@@ -311,6 +386,7 @@ export default function AccountDetailPage() {
             unknowns={unknowns}
             deals={deals}
             onInspectEvidence={handleInspectEvidence}
+            onOpenForensicDrawer={handleOpenForensicDrawer}
           />
         )}
       </div>
@@ -339,6 +415,18 @@ export default function AccountDetailPage() {
           setIsInspectorOpen(false);
           setInspectFact(null);
         }}
+      />
+
+      {/* Forensic Reality Check Drawer */}
+      <ForensicDrawer
+        record={selectedForensicRecord}
+        isOpen={isForensicOpen}
+        onClose={() => {
+          setIsForensicOpen(false);
+          setSelectedForensicRecord(null);
+        }}
+        onInspectEvidence={handleInspectEvidence}
+        onOpenNoteWriter={() => setIsNoteWriterOpen(true)}
       />
     </div>
   );

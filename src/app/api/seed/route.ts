@@ -1,11 +1,20 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { askGemini } from '@/lib/gemini';
-import seedData from '@/data/seed.json';
+import fs from 'fs';
+import path from 'path';
+import { STAKEHOLDER_PERSONAS, FORENSIC_RECORDS } from '@/lib/intelligence-data';
 
 export const dynamic = 'force-dynamic';
 
-// Helper to clean JSON string from LLM response
+function cleanJson(str: string): any {
+  try {
+    return JSON.parse(str.replace(/^\uFEFF/, ''));
+  } catch {
+    return null;
+  }
+}
+
 function parseJsonFromText(text: string) {
   try {
     const cleaned = text
@@ -48,9 +57,25 @@ async function runSeed() {
         name TEXT NOT NULL,
         role TEXT,
         relationship TEXT,
-        available INTEGER DEFAULT 1
+        available INTEGER DEFAULT 1,
+        location TEXT,
+        deal_role TEXT,
+        login_count INTEGER DEFAULT 0,
+        activity_summary TEXT,
+        pain_point TEXT,
+        engagement_directive TEXT
       );
     `);
+
+    // Ensure columns exist if table was already created
+    try {
+      await db.execute("ALTER TABLE contacts ADD COLUMN location TEXT");
+      await db.execute("ALTER TABLE contacts ADD COLUMN deal_role TEXT");
+      await db.execute("ALTER TABLE contacts ADD COLUMN login_count INTEGER DEFAULT 0");
+      await db.execute("ALTER TABLE contacts ADD COLUMN activity_summary TEXT");
+      await db.execute("ALTER TABLE contacts ADD COLUMN pain_point TEXT");
+      await db.execute("ALTER TABLE contacts ADD COLUMN engagement_directive TEXT");
+    } catch {}
 
     await db.execute(`
       CREATE TABLE IF NOT EXISTS facts (
@@ -76,9 +101,14 @@ async function runSeed() {
         blocker_status TEXT,
         evidence_ids TEXT,
         deadline_text TEXT,
-        deadline_passed INTEGER DEFAULT 0
+        deadline_passed INTEGER DEFAULT 0,
+        integrity_status TEXT DEFAULT 'verified'
       );
     `);
+
+    try {
+      await db.execute("ALTER TABLE deals ADD COLUMN integrity_status TEXT DEFAULT 'verified'");
+    } catch {}
 
     await db.execute(`
       CREATE TABLE IF NOT EXISTS offers (
@@ -98,6 +128,20 @@ async function runSeed() {
         title TEXT,
         path TEXT,
         content TEXT
+      );
+    `);
+
+    await db.execute(`
+      CREATE TABLE IF NOT EXISTS paperwork (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        account_id TEXT NOT NULL,
+        path TEXT NOT NULL,
+        kind TEXT,
+        title TEXT,
+        text TEXT,
+        data TEXT,
+        created_at TEXT DEFAULT (datetime('now')),
+        UNIQUE(account_id, path)
       );
     `);
 
@@ -186,7 +230,7 @@ async function runSeed() {
       );
     `);
 
-    // 2. Clear existing core seed tables to allow clean re-seed
+    // 2. Clear core tables to allow clean re-seed
     await db.execute(`DELETE FROM accounts;`);
     await db.execute(`DELETE FROM contacts;`);
     await db.execute(`DELETE FROM facts;`);
@@ -198,27 +242,113 @@ async function runSeed() {
     await db.execute(`DELETE FROM unknowns;`);
     await db.execute(`DELETE FROM deal_contacts;`);
 
-    // 3. Insert Accounts & related entities
+    // 3. Load accounts dynamically from raw files
+    const cwd = process.cwd();
+    const accountsToSeed: any[] = [];
+
+    const rawPath = path.join(cwd, 'mcp_accounts_raw.json');
+    if (fs.existsSync(rawPath)) {
+      const raw = cleanJson(fs.readFileSync(rawPath, 'utf8'));
+      if (Array.isArray(raw?.accounts)) {
+        accountsToSeed.push(...raw.accounts);
+      } else if (raw?.result?.content?.[0]?.text) {
+        try {
+          const inner = JSON.parse(raw.result.content[0].text);
+          if (Array.isArray(inner?.accounts)) {
+            accountsToSeed.push(...inner.accounts);
+          }
+        } catch {}
+      }
+    }
+
+    const rawKPath = path.join(cwd, 'mcp_account_K_raw.json');
+    if (fs.existsSync(rawKPath)) {
+      const rawK = cleanJson(fs.readFileSync(rawKPath, 'utf8'));
+      let kAccs = Array.isArray(rawK?.accounts) ? rawK.accounts : null;
+      if (!kAccs && rawK?.result?.content?.[0]?.text) {
+        try {
+          const innerK = JSON.parse(rawK.result.content[0].text);
+          if (Array.isArray(innerK?.accounts)) kAccs = innerK.accounts;
+        } catch {}
+      }
+      if (kAccs?.[0] && !accountsToSeed.some((a) => a.id === 'K')) {
+        accountsToSeed.push(kAccs[0]);
+      }
+    }
+
     let accountCount = 0;
     let contactCount = 0;
     let factCount = 0;
     let dealCount = 0;
     let offerCount = 0;
-    let fileCount = 0;
+    let paperworkCount = 0;
 
-    for (const acc of seedData.accounts) {
+    for (const acc of accountsToSeed) {
       accountCount++;
       await db.execute({
         sql: `INSERT INTO accounts (id, name, official_story, raw_json, synced_at) VALUES (?, ?, ?, ?, datetime('now'))`,
         args: [acc.id, acc.name, acc.official_story, JSON.stringify(acc)],
       });
 
-      // Stakeholders / Contacts
+      // Seed paperwork pack
+      const packPath = path.join(cwd, `mcp_pack_${acc.id}_all.json`);
+      let packRecords: any[] = [];
+      if (fs.existsSync(packPath)) {
+        const pack = cleanJson(fs.readFileSync(packPath, 'utf8'));
+        if (pack?.records) packRecords = pack.records;
+      }
+
+      for (const rec of packRecords) {
+        paperworkCount++;
+        const textContent = typeof rec.text === 'string' ? rec.text : typeof rec.data === 'string' ? rec.data : null;
+        const dataJson = typeof rec.data === 'object' ? JSON.stringify(rec.data) : null;
+        await db.execute({
+          sql: `INSERT INTO paperwork (account_id, path, kind, title, text, data)
+                VALUES (?, ?, ?, ?, ?, ?)
+                ON CONFLICT(account_id, path) DO UPDATE SET 
+                  kind = excluded.kind, 
+                  title = excluded.title, 
+                  text = excluded.text, 
+                  data = excluded.data`,
+          args: [
+            acc.id,
+            rec.path,
+            rec.kind || 'document',
+            rec.title || path.basename(rec.path),
+            textContent,
+            dataJson,
+          ],
+        });
+      }
+
+      // Stakeholders / Contacts with Telemetry & Power mapping
       for (const st of acc.stakeholders || []) {
         contactCount++;
+        const persona = STAKEHOLDER_PERSONAS[st.id];
+        const location = persona?.location || `${acc.name} Operations`;
+        const dealRole = persona?.dealRole || (st.relationship === 'ally' ? 'Champion' : 'User');
+        const loginCount = persona?.loginCount90d || 0;
+        const activitySummary = persona?.activityLabel || `${loginCount} logins in last 90 days`;
+        const painPoint = persona?.painPoint || 'Operational deployment and onboarding required';
+        const directive = persona?.howToEngageDirective || 'Engage directly to align operational objectives and document workflow requirements.';
+
         await db.execute({
-          sql: `INSERT INTO contacts (id, account_id, name, role, relationship, available) VALUES (?, ?, ?, ?, ?, ?)`,
-          args: [st.id, acc.id, st.name, st.role, st.relationship, st.available ? 1 : 0],
+          sql: `INSERT INTO contacts (id, account_id, name, role, relationship, available, location, deal_role, login_count, activity_summary, pain_point, engagement_directive) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          args: [
+            st.id,
+            acc.id,
+            st.name,
+            st.role,
+            st.relationship,
+            st.available ? 1 : 0,
+            location,
+            dealRole,
+            loginCount,
+            activitySummary,
+            painPoint,
+            directive,
+          ],
         });
       }
 
@@ -239,16 +369,19 @@ async function runSeed() {
         });
       }
 
-      // Deals / Opportunities
+      // Deals / Opportunities with Provenance Status
       for (const opp of acc.opportunities || []) {
         dealCount++;
+        const forensic = FORENSIC_RECORDS[opp.id];
+        const integrityStatus = forensic ? forensic.integrity : 'verified';
         const blockerText = opp.blocker ? opp.blocker.text : null;
         const blockerStatus = opp.blocker ? opp.blocker.status : 'cleared';
         const deadlineText = opp.deadline ? opp.deadline.text : null;
         const deadlinePassed = opp.deadline?.passed ? 1 : 0;
 
         await db.execute({
-          sql: `INSERT INTO deals (id, account_id, title, stage, worth_up_to, size, blocker_text, blocker_status, evidence_ids, deadline_text, deadline_passed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          sql: `INSERT INTO deals (id, account_id, title, stage, worth_up_to, size, blocker_text, blocker_status, evidence_ids, deadline_text, deadline_passed, integrity_status) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           args: [
             opp.id,
             acc.id,
@@ -261,6 +394,7 @@ async function runSeed() {
             JSON.stringify(opp.evidence || []),
             deadlineText,
             deadlinePassed,
+            integrityStatus,
           ],
         });
       }
@@ -275,23 +409,21 @@ async function runSeed() {
       }
     }
 
-    // Files
-    for (const file of seedData.files || []) {
-      fileCount++;
-      await db.execute({
-        sql: `INSERT INTO files (id, account_id, title, path, content) VALUES (?, ?, ?, ?, ?)`,
-        args: [file.id, file.account || 'A', file.title, file.path || null, null],
-      });
-    }
-
-    // 4. Run Gemini Intelligence Analyses (with resilient fallbacks)
+    // 4. Run Gemini Intelligence Analyses with Grounded System Instruction
     console.log('Running Gemini AI intelligence analysis...');
-    const contextDataStr = JSON.stringify(seedData);
+    const contextDataStr = JSON.stringify(accountsToSeed);
+
+    const STRICT_SYSTEM_INSTRUCTION = `You are NEXUS, an account intelligence engine. 
+You do not give generic sales advice. You ground every conclusion in the account's paperwork, emails, call transcripts, and flight logs.
+- Always distinguish between what a contact claimed vs what the paperwork proves.
+- When identifying a blocker, look for unanswered tickets or missing documentation.
+- When recommending actions, specify the contact, the commercial value unlocked, and the exact evidence ID.
+- Never invent figures or assume budget exists if financing sign-off is unverified.`;
 
     // Call 1: Priority Actions
     let priorityActions: any[] = [];
     try {
-      const prompt = `Given these two accounts with their deals, blockers, contacts, facts and deadlines, generate the TOP 5 priority actions across ALL accounts, ranked by commercial impact and urgency.
+      const prompt = `Generate the TOP 5 priority actions across ALL accounts, ranked by commercial impact and urgency.
 For each action return a JSON array of objects with EXACTLY these keys:
 [
   {
@@ -300,7 +432,7 @@ For each action return a JSON array of objects with EXACTLY these keys:
     "reason": "why this matters now",
     "deal_id": "which deal id",
     "deal_title": "deal title",
-    "account_id": "A or B",
+    "account_id": "account id",
     "contact": "name of contact to engage",
     "evidence_ids": ["supporting fact or file ids"],
     "urgency": "immediate" or "this_week" or "this_month",
@@ -310,13 +442,13 @@ For each action return a JSON array of objects with EXACTLY these keys:
 Rules: Only use data provided. Never invent financial numbers - use worth_up_to from deals. Cite evidence IDs. Return ONLY valid JSON array.
 Data: ${contextDataStr}`;
 
-      const aiRes = await askGemini("You are NEXUS intelligence engine. Return valid JSON only.", prompt);
+      const aiRes = await askGemini(STRICT_SYSTEM_INSTRUCTION, prompt);
       const parsed = parseJsonFromText(aiRes);
       if (Array.isArray(parsed) && parsed.length > 0) {
         priorityActions = parsed;
       }
     } catch (err) {
-      console.warn('Gemini Call 1 (Actions) failed or timed out, using calibrated defaults:', err);
+      console.warn('Gemini Call 1 (Actions) failed, using calibrated defaults:', err);
     }
 
     if (priorityActions.length === 0) {
@@ -324,12 +456,12 @@ Data: ${contextDataStr}`;
         {
           priority: 1,
           action: "Dispatch Tarn Valley data-flow pack directly to Fatima Osei",
-          reason: "DPIA is stalled 4 months due to unassigned support ticket; DPO is ready to complete in 3 weeks once received, unblocking live flights for 2 forces",
+          reason: "DPIA is stalled 4 months due to unassigned support ticket FB-10412; DPO is ready to complete in 3 weeks once received, unblocking live flights for 2 forces",
           deal_id: "a_tarn",
           deal_title: "Tarn Valley and Norwold go live",
           account_id: "A",
           contact: "Fatima Osei",
-          evidence_ids: ["fo_dpia_2", "fo_needs_3", "pj_ticket", "srv_dataflow"],
+          evidence_ids: ["fo_dpia_2", "fo_needs_3", "pj_ticket", "srv_dataflow", "FB-10412"],
           urgency: "immediate",
           impact_value: 200000,
         },
@@ -353,7 +485,7 @@ Data: ${contextDataStr}`;
           deal_title: "Scale Westmere's fleet",
           account_id: "A",
           contact: "Ewan Brooks",
-          evidence_ids: ["eb_heli_1", "eb_sign_2", "km_value_2"],
+          evidence_ids: ["eb_heli_1", "eb_sign_2", "km_value_2", "flights.csv"],
           urgency: "this_week",
           impact_value: 250000,
         },
@@ -365,21 +497,21 @@ Data: ${contextDataStr}`;
           deal_title: "Renew the Aldermoor contract (14 docks)",
           account_id: "B",
           contact: "Nadia Rahman",
-          evidence_ids: ["jt_prem_2", "nr_evidence_2", "sr_roi_2"],
+          evidence_ids: ["jt_prem_2", "nr_evidence_2", "sr_roi_2", "insurer_log_pack"],
           urgency: "this_week",
           impact_value: 140000,
         },
         {
           priority: 5,
-          action: "Formulate costed operating model & staffing plan for Alliance 300-dock tender",
-          reason: "Tender spec locks imminently; specification currently lacks operating budget and staffing model, risking exclusion",
-          deal_id: "a_tender",
-          deal_title: "Position for the 300-dock framework tender",
-          account_id: "A",
-          contact: "Hannah Doyle",
-          evidence_ids: ["rc_tender_2", "hd_calloff_2", "km_staff_2"],
-          urgency: "this_month",
-          impact_value: 1500000,
+          action: "Remotely provision and activate gatehouse roof dock for Dana Whitfield",
+          reason: "Kestrel Estates dock installed 5 weeks ago but unconfigured after reseller ghosted customer; urgent onboarding needed",
+          deal_id: "k_north_dock",
+          deal_title: "Get the north-entrance dock flying night patrols",
+          account_id: "K",
+          contact: "Dana Whitfield",
+          evidence_ids: ["emails/2026-10-19_dana_when.txt", "contract.txt"],
+          urgency: "immediate",
+          impact_value: 140000,
         },
       ];
     }
@@ -406,28 +538,16 @@ Data: ${contextDataStr}`;
     let riskItems: any[] = [];
     try {
       const prompt = `Analyze these accounts for commercial risks. Consider:
-- Deals with open blockers
+- Deals with open blockers and contradictory paperwork
 - Approaching or missed deadlines  
 - Neutral/cold contacts on important deals
 - Missing evidence for key claims
 - Contradictions between claims and verified facts
 - Key person dependencies
+Return ONLY valid JSON array with keys: severity, risk, deal_id, account_id, impact_value, mitigation, evidence_ids.
+Data: ${contextDataStr}`;
 
-For each risk return a JSON array:
-[
-  {
-    "severity": "critical" or "high" or "medium",
-    "risk": "description of the risk",
-    "deal_id": "affected deal id",
-    "account_id": "A or B",
-    "impact_value": dollar amount at risk,
-    "mitigation": "recommended mitigation",
-    "evidence_ids": ["supporting fact ids"]
-  }
-]
-Return ONLY valid JSON array. Data: ${contextDataStr}`;
-
-      const aiRes = await askGemini("You are NEXUS risk intelligence engine. Return valid JSON only.", prompt);
+      const aiRes = await askGemini(STRICT_SYSTEM_INSTRUCTION, prompt);
       const parsed = parseJsonFromText(aiRes);
       if (Array.isArray(parsed) && parsed.length > 0) {
         riskItems = parsed;
@@ -458,16 +578,16 @@ Return ONLY valid JSON array. Data: ${contextDataStr}`;
         },
         {
           severity: "high",
-          risk: "DPIA uncompleted after 4-month unanswered support ticket; 2 of 4 forces blocked from flying",
+          risk: "DPIA uncompleted after 4-month unanswered support ticket FB-10412; 2 of 4 forces blocked from flying",
           deal_id: "a_tarn",
           account_id: "A",
           impact_value: 200000,
-          mitigation: "Have CSM escalate engineering data-flow pack directly to Fatima Osei immediately",
-          evidence_ids: ["fo_dpia_2", "pj_ticket", "srv_dataflow"],
+          mitigation: "Directly courier engineering data-flow pack srv_dataflow to Fatima Osei immediately",
+          evidence_ids: ["fo_dpia_2", "pj_ticket", "srv_dataflow", "FB-10412"],
         },
         {
           severity: "high",
-          risk: "Aldermoor €1.2M claimed savings unverified in finance; plant managers resent cost allocations",
+          risk: "Aldermoor €1.2M claimed savings contradicted by Finance; plant managers resent cost allocations",
           deal_id: "b_renewal",
           account_id: "B",
           impact_value: 140000,
@@ -475,13 +595,13 @@ Return ONLY valid JSON array. Data: ${contextDataStr}`;
           evidence_ids: ["sr_roi_2", "nr_cost_2", "jt_prem_2", "nr_evidence_2"],
         },
         {
-          severity: "medium",
-          risk: "No pooled alliance budget; each individual force CFO must approve call-offs independently",
-          deal_id: "a_renewal",
-          account_id: "A",
-          impact_value: 350000,
-          mitigation: "Engage Ewan Brooks and individual force finance leads with customized per-force utilization business cases",
-          evidence_ids: ["rc_funding_2", "hd_calloff_2"],
+          severity: "high",
+          risk: "Kestrel Estates gatehouse roof dock unactivated 5 weeks after payment; customer ghosted by reseller",
+          deal_id: "k_north_dock",
+          account_id: "K",
+          impact_value: 140000,
+          mitigation: "Provide direct remote cloud configuration and operator training to Dana Whitfield",
+          evidence_ids: ["emails/2026-10-19_dana_when.txt", "contract.txt"],
         },
       ];
     }
@@ -505,27 +625,10 @@ Return ONLY valid JSON array. Data: ${contextDataStr}`;
     let unknownsList: any[] = [];
     try {
       const prompt = `What critical information is MISSING from these accounts?
-Look for:
-- Evidence IDs referenced in deals that have no matching fact
-- Stakeholder roles that can't be determined
-- Financial claims without verification
-- Deals with no deadline information
-- Contacts with no relationship depth
+Return JSON array with keys: what_missing, why_matters, deal_id, account_id, who_can_provide, suggested_action.
+Data: ${contextDataStr}`;
 
-Return a JSON array:
-[
-  {
-    "what_missing": "description",
-    "why_matters": "impact on decisions",
-    "deal_id": "affected deal id",
-    "account_id": "A or B",
-    "who_can_provide": "person or source",
-    "suggested_action": "how to resolve"
-  }
-]
-Return ONLY valid JSON array. Data: ${contextDataStr}`;
-
-      const aiRes = await askGemini("You are NEXUS unknowns intelligence engine. Return valid JSON only.", prompt);
+      const aiRes = await askGemini(STRICT_SYSTEM_INSTRUCTION, prompt);
       const parsed = parseJsonFromText(aiRes);
       if (Array.isArray(parsed) && parsed.length > 0) {
         unknownsList = parsed;
@@ -545,14 +648,6 @@ Return ONLY valid JSON array. Data: ${contextDataStr}`;
           suggested_action: "Calculate cost per flight using monthly flight logs and helicopter overtime logs",
         },
         {
-          what_missing: "Event-day policing operational plan and funding source for Westmere Stadium 30 docks",
-          why_matters: "Opportunity is based on informal conversation; lack of funding/plan could stall framework inclusion",
-          deal_id: "a_tender",
-          account_id: "A",
-          who_can_provide: "Westmere Superintendent & Rhys Calder",
-          suggested_action: "Request formal operational briefing before framework tender specification freezes",
-        },
-        {
           what_missing: "Written Standard Operating Procedure for plant dock installations",
           why_matters: "All procedural knowledge is currently retained solely by Stefan's departing deputy",
           deal_id: "b_idle",
@@ -567,6 +662,14 @@ Return ONLY valid JSON array. Data: ${contextDataStr}`;
           account_id: "B",
           who_can_provide: "Nadia Rahman & Beatriz Alonso",
           suggested_action: "Audit the three upcoming guard contract renewals over the next 4 months",
+        },
+        {
+          what_missing: "Site certification and remote activation key for Kestrel Estates gatehouse dock",
+          why_matters: "Customer paid in full but dock cannot fly without initial cloud pairing",
+          deal_id: "k_north_dock",
+          account_id: "K",
+          who_can_provide: "Dana Whitfield & Field Engineer",
+          suggested_action: "Dispatch field technician or schedule remote provisioning session with Dana Whitfield",
         },
       ];
     }
@@ -588,28 +691,11 @@ Return ONLY valid JSON array. Data: ${contextDataStr}`;
     // Call 4: Stakeholder Power Map
     let dealContacts: any[] = [];
     try {
-      const prompt = `For each deal across both accounts, determine who fills each stakeholder role based on the evidence:
-- Decider: who makes or approves the decision
-- Payer: who controls the budget
-- User: who uses the product/service
-- Blocker: who is currently preventing progress
+      const prompt = `For each deal across all accounts, determine who fills each stakeholder role: Decider, Payer, User, Blocker.
+Return JSON array with keys: deal_id, account_id, decider, payer, user, blocker.
+Data: ${contextDataStr}`;
 
-Use ONLY the stakeholders listed in the accounts. If a role is unknown or external, indicate so. Mark confidence as "inferred".
-
-Return a JSON array of objects:
-[
-  {
-    "deal_id": "deal id string",
-    "account_id": "A or B",
-    "decider": "Name",
-    "payer": "Name",
-    "user": "Name",
-    "blocker": "Name"
-  }
-]
-Return ONLY valid JSON array. Data: ${contextDataStr}`;
-
-      const aiRes = await askGemini("You are NEXUS stakeholder mapping engine. Return valid JSON only.", prompt);
+      const aiRes = await askGemini(STRICT_SYSTEM_INSTRUCTION, prompt);
       const parsed = parseJsonFromText(aiRes);
       if (Array.isArray(parsed) && parsed.length > 0) {
         dealContacts = parsed;
@@ -634,7 +720,7 @@ Return ONLY valid JSON array. Data: ${contextDataStr}`;
           decider: "Tarn Valley Chief Constable",
           payer: "Tarn Valley Finance",
           user: "Tarn Valley & Norwold Officers",
-          blocker: "Fatima Osei (DPO)",
+          blocker: "Fatima Osei (DPO - Ticket FB-10412)",
         },
         {
           deal_id: "a_westmere",
@@ -684,6 +770,14 @@ Return ONLY valid JSON array. Data: ${contextDataStr}`;
           user: "Sister Co Security Leads",
           blocker: "Nadia Rahman (No view/advocacy)",
         },
+        {
+          deal_id: "k_north_dock",
+          account_id: "K",
+          decider: "Dana Whitfield",
+          payer: "Lucy Pratt",
+          user: "Graham Okafor",
+          blocker: "Unactivated Dock (Installer Ghosted)",
+        },
       ];
     }
 
@@ -701,7 +795,7 @@ Return ONLY valid JSON array. Data: ${contextDataStr}`;
       });
     }
 
-    // 5. Initial Signals Seed (if empty)
+    // 5. Initial Signals Seed
     await db.execute({
       sql: `INSERT OR IGNORE INTO signals (id, account_id, text, raw_json, fetched_at) VALUES (?, ?, ?, ?, datetime('now'))`,
       args: [
@@ -724,14 +818,14 @@ Return ONLY valid JSON array. Data: ${contextDataStr}`;
 
     return NextResponse.json({
       success: true,
-      message: 'Database seeded successfully with MCP data and Gemini intelligence analysis',
+      message: 'Database seeded successfully with dynamic accounts, telemetry personas, and forensic evidence analysis',
       counts: {
         accounts: accountCount,
         contacts: contactCount,
         facts: factCount,
         deals: dealCount,
         offers: offerCount,
-        files: fileCount,
+        paperwork: paperworkCount,
         priorityActions: priorityActions.length,
         risks: riskItems.length,
         unknowns: unknownsList.length,

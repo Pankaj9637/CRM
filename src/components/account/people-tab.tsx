@@ -1,112 +1,92 @@
 'use client';
 
-import React from 'react';
-import { Badge } from '@/components/badge';
-import { Sparkles } from 'lucide-react';
+import React, { useState } from 'react';
+import { PersonCard } from './person-card';
+import { Sparkles, Users, Filter } from 'lucide-react';
 
 interface PeopleTabProps {
   contacts: any[];
   deals: any[];
   dealContacts: any[];
+  onInspectEvidence?: (evidenceId: string) => void;
+  onOpenNoteWriter?: () => void;
 }
 
-export function PeopleTab({ contacts, deals, dealContacts }: PeopleTabProps) {
+export function PeopleTab({ contacts, deals, dealContacts, onInspectEvidence, onOpenNoteWriter }: PeopleTabProps) {
+  const [roleFilter, setRoleFilter] = useState<string>('all');
   const dealsMap = new Map(deals.map((d) => [d.id, d.title]));
+
+  const filteredContacts = contacts.filter((c) => {
+    if (roleFilter === 'all') return true;
+    const dealRole = (c.deal_role || '').toLowerCase();
+    const rel = (c.relationship || '').toLowerCase();
+    if (roleFilter === 'champion') return dealRole === 'champion' || rel === 'ally';
+    if (roleFilter === 'blocker') return dealRole === 'blocker';
+    if (roleFilter === 'payer') return dealRole === 'payer';
+    if (roleFilter === 'decider') return dealRole === 'decider';
+    if (roleFilter === 'user') return dealRole === 'user';
+    return true;
+  });
 
   return (
     <div className="space-y-6">
       {/* Question Header */}
-      <div className="p-4 bg-[#242424] border border-[#D95B28]/40 rounded-2xl flex items-center justify-between">
+      <div className="p-4 bg-[#242424] border border-[#D95B28]/40 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h3 className="text-sm font-bold text-[#F0F0F0]">Q2: Who has the power?</h3>
           <p className="text-xs text-[#999999] mt-0.5">
-            Stakeholder relationship map combined with AI-inferred decision rights (Decider, Payer, User, Blocker).
+            Stakeholder persona directory with platform telemetry, engagement meters, deal responsibilities, and hot-button pain points.
           </p>
         </div>
-        <span className="text-xs font-mono font-bold bg-[#1A1A1A] px-2.5 py-1 rounded-lg text-[#EC7D42] border border-[#D95B28]/40 shadow-xs flex items-center gap-1.5">
+        <span className="text-xs font-mono font-bold bg-[#1A1A1A] px-2.5 py-1 rounded-lg text-[#EC7D42] border border-[#D95B28]/40 shadow-xs flex items-center gap-1.5 self-start sm:self-center">
           <Sparkles className="h-3 w-3 text-[#D95B28]" />
-          <span>AI INFERRED POWER MAP</span>
+          <span>STAKEHOLDER POWER MAP</span>
         </span>
       </div>
 
-      {/* Stakeholders Card Grid */}
-      <div>
-        <div className="text-xs font-bold text-[#F0F0F0] uppercase tracking-wider mb-3">
-          Stakeholder Directory ({contacts.length} Key Contacts)
+      {/* Role Filter Pills */}
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <div className="flex items-center gap-1.5 text-xs overflow-x-auto pb-1">
+          <span className="text-[11px] font-semibold text-[#8A8A8A] uppercase mr-1 flex items-center gap-1">
+            <Filter className="h-3 w-3" />
+            <span>Filter:</span>
+          </span>
+          {[
+            { id: 'all', label: `All (${contacts.length})` },
+            { id: 'champion', label: 'Champions / Allies' },
+            { id: 'decider', label: 'Deciders' },
+            { id: 'payer', label: 'Payers' },
+            { id: 'blocker', label: 'Blockers' },
+            { id: 'user', label: 'Users' },
+          ].map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setRoleFilter(item.id)}
+              className={`px-3 py-1 rounded-lg font-medium transition-colors whitespace-nowrap ${
+                roleFilter === item.id
+                  ? 'bg-[#D95B28] text-white shadow-xs'
+                  : 'bg-[#242424] text-[#999999] hover:text-[#F0F0F0] border border-[#3D3D3D]'
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
         </div>
+        <span className="text-xs font-mono text-[#999999]">
+          Showing {filteredContacts.length} of {contacts.length} stakeholders
+        </span>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-          {contacts.map((contact) => {
-            const rolesForContact = dealContacts.filter(
-              (dc) =>
-                dc.decider?.toLowerCase().includes(contact.name.toLowerCase()) ||
-                dc.payer?.toLowerCase().includes(contact.name.toLowerCase()) ||
-                dc.user?.toLowerCase().includes(contact.name.toLowerCase()) ||
-                dc.blocker?.toLowerCase().includes(contact.name.toLowerCase())
-            );
-
-            return (
-              <div
-                key={contact.id}
-                className="p-4 rounded-2xl bg-[#242424] border border-[#3D3D3D] shadow-sm space-y-3"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-[#F0F0F0] text-sm">{contact.name}</span>
-                      <Badge variant={contact.relationship} size="sm">
-                        {contact.relationship.toUpperCase()}
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-[#999999] mt-0.5">{contact.role}</p>
-                  </div>
-
-                  <span
-                    className={`text-[10px] font-mono px-2 py-0.5 rounded font-semibold ${
-                      contact.available
-                        ? 'bg-[#3A7A65]/20 text-[#5eead4] border border-[#3A7A65]/40'
-                        : 'bg-[#2E2E2E] text-[#999999] border border-[#3D3D3D]'
-                    }`}
-                  >
-                    {contact.available ? 'AVAILABLE' : 'UNAVAILABLE'}
-                  </span>
-                </div>
-
-                {/* AI Inferred Role Pills */}
-                {rolesForContact.length > 0 && (
-                  <div className="p-3 bg-[#1A1A1A] rounded-xl border border-[#3D3D3D] space-y-2">
-                    <div className="flex items-center justify-between text-[10px]">
-                      <span className="font-semibold text-[#8A8A8A] uppercase tracking-wider">
-                        Assigned Deal Responsibilities
-                      </span>
-                      <span className="text-[10px] bg-[#D95B28]/20 text-[#EC7D42] font-semibold px-1.5 py-0.2 rounded border border-[#D95B28]/40">
-                        AI Inferred
-                      </span>
-                    </div>
-
-                    <div className="space-y-1">
-                      {rolesForContact.map((r, i) => {
-                        const dealTitle = dealsMap.get(r.deal_id) || r.deal_id;
-                        let matchedRole = '';
-                        if (r.decider?.toLowerCase().includes(contact.name.toLowerCase())) matchedRole = 'Decider';
-                        else if (r.payer?.toLowerCase().includes(contact.name.toLowerCase())) matchedRole = 'Payer';
-                        else if (r.user?.toLowerCase().includes(contact.name.toLowerCase())) matchedRole = 'User';
-                        else if (r.blocker?.toLowerCase().includes(contact.name.toLowerCase())) matchedRole = 'Blocker';
-
-                        return (
-                          <div key={i} className="flex items-center justify-between text-xs text-[#D6D6D6]">
-                            <span className="font-medium text-[#999999] truncate">{dealTitle}:</span>
-                            <span className="font-bold text-[#F0F0F0] ml-2 shrink-0">{matchedRole}</span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
+      {/* Stakeholder Person Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {filteredContacts.map((contact) => (
+          <PersonCard
+            key={contact.id}
+            person={contact}
+            onInspectEvidence={onInspectEvidence}
+            onOpenNoteWriter={onOpenNoteWriter}
+          />
+        ))}
       </div>
 
       {/* Deal-by-Deal Power Breakdown Table */}
@@ -114,7 +94,7 @@ export function PeopleTab({ contacts, deals, dealContacts }: PeopleTabProps) {
         <div className="flex items-center justify-between border-b border-[#3D3D3D] pb-3">
           <div>
             <h4 className="text-sm font-bold text-[#F0F0F0]">Decision Authority Matrix by Deal</h4>
-            <p className="text-xs text-[#999999]">Decider, Payer, User and Blocker roles mapped per opportunity</p>
+            <p className="text-xs text-[#999999]">Decider, Payer, User, and Blocker mapped to individual opportunities</p>
           </div>
           <span className="text-xs text-[#EC7D42] font-semibold bg-[#D95B28]/15 px-2.5 py-0.5 rounded-lg border border-[#D95B28]/40">
             AI Inferred
@@ -125,7 +105,7 @@ export function PeopleTab({ contacts, deals, dealContacts }: PeopleTabProps) {
           <table className="w-full text-xs text-left">
             <thead className="bg-[#1A1A1A] border-b border-[#3D3D3D] text-[#8A8A8A] font-semibold uppercase text-[10px]">
               <tr>
-                <th className="py-2.5 px-3">Deal</th>
+                <th className="py-2.5 px-3">Deal Title</th>
                 <th className="py-2.5 px-3">Decider (Approver)</th>
                 <th className="py-2.5 px-3">Payer (Budget Owner)</th>
                 <th className="py-2.5 px-3">User (End Operator)</th>
@@ -133,33 +113,41 @@ export function PeopleTab({ contacts, deals, dealContacts }: PeopleTabProps) {
               </tr>
             </thead>
             <tbody className="divide-y divide-[#3D3D3D]">
-              {dealContacts.map((dc) => (
-                <tr key={dc.id || dc.deal_id} className="hover:bg-[#2E2E2E]/60 transition-colors">
-                  <td className="py-3 px-3 font-semibold text-[#F0F0F0]">
-                    {dealsMap.get(dc.deal_id) || dc.deal_id}
-                  </td>
-                  <td className="py-3 px-3 text-[#D6D6D6]">
-                    <span className="font-medium">{dc.decider}</span>
-                  </td>
-                  <td className="py-3 px-3 text-[#D6D6D6]">
-                    <span className="font-medium">{dc.payer}</span>
-                  </td>
-                  <td className="py-3 px-3 text-[#D6D6D6]">
-                    <span className="font-medium">{dc.user}</span>
-                  </td>
-                  <td className="py-3 px-3">
-                    <span
-                      className={`font-semibold ${
-                        dc.blocker && dc.blocker !== 'None' && !dc.blocker.includes('Cleared')
-                          ? 'text-[#fda4af]'
-                          : 'text-[#5eead4]'
-                      }`}
-                    >
-                      {dc.blocker}
-                    </span>
+              {dealContacts.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="py-4 text-center text-[#8A8A8A]">
+                    No deal authority mappings registered for this account.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                dealContacts.map((dc) => (
+                  <tr key={dc.id || dc.deal_id} className="hover:bg-[#2E2E2E]/60 transition-colors">
+                    <td className="py-3 px-3 font-semibold text-[#F0F0F0]">
+                      {dealsMap.get(dc.deal_id) || dc.deal_id}
+                    </td>
+                    <td className="py-3 px-3 text-[#D6D6D6]">
+                      <span className="font-medium">{dc.decider}</span>
+                    </td>
+                    <td className="py-3 px-3 text-[#D6D6D6]">
+                      <span className="font-medium">{dc.payer}</span>
+                    </td>
+                    <td className="py-3 px-3 text-[#D6D6D6]">
+                      <span className="font-medium">{dc.user}</span>
+                    </td>
+                    <td className="py-3 px-3">
+                      <span
+                        className={`font-semibold ${
+                          dc.blocker && dc.blocker !== 'None' && !dc.blocker.includes('Cleared')
+                            ? 'text-[#fda4af]'
+                            : 'text-[#5eead4]'
+                        }`}
+                      >
+                        {dc.blocker}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

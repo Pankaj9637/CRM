@@ -16,7 +16,19 @@ export async function POST(req: NextRequest) {
     let contextData: any = {};
 
     if (accountId && accountId !== 'ALL') {
-      const [accRes, contactsRes, factsRes, dealsRes, offersRes, filesRes, actionsRes, risksRes, unknownsRes, notesRes] = await Promise.all([
+      const [
+        accRes,
+        contactsRes,
+        factsRes,
+        dealsRes,
+        offersRes,
+        filesRes,
+        actionsRes,
+        risksRes,
+        unknownsRes,
+        notesRes,
+        paperworkRes,
+      ] = await Promise.all([
         db.execute({ sql: 'SELECT * FROM accounts WHERE id = ?', args: [accountId] }),
         db.execute({ sql: 'SELECT * FROM contacts WHERE account_id = ?', args: [accountId] }),
         db.execute({ sql: 'SELECT * FROM facts WHERE account_id = ?', args: [accountId] }),
@@ -27,6 +39,10 @@ export async function POST(req: NextRequest) {
         db.execute({ sql: 'SELECT * FROM risks WHERE account_id = ?', args: [accountId] }),
         db.execute({ sql: 'SELECT * FROM unknowns WHERE account_id = ?', args: [accountId] }),
         db.execute({ sql: 'SELECT * FROM notes WHERE account_id = ?', args: [accountId] }),
+        db.execute({
+          sql: 'SELECT path, kind, title, substr(text, 1, 800) as excerpt FROM paperwork WHERE account_id = ? LIMIT 25',
+          args: [accountId],
+        }),
       ]);
 
       if (accRes.rows.length > 0) {
@@ -44,6 +60,7 @@ export async function POST(req: NextRequest) {
         risks: risksRes.rows,
         unknowns: unknownsRes.rows,
         notes: notesRes.rows,
+        paperworkExcerpts: paperworkRes.rows,
       };
     } else {
       const [accountsRes, dealsRes, contactsRes, factsRes, risksRes, actionsRes] = await Promise.all([
@@ -65,22 +82,17 @@ export async function POST(req: NextRequest) {
       };
     }
 
-    const systemPrompt = `You are NEXUS, an elite AI account intelligence copilot for a high-stakes enterprise CRM.
+    const systemPrompt = `You are NEXUS, an account intelligence engine. 
+You do not give generic sales advice. You ground every conclusion in the account's paperwork, emails, call transcripts, and flight logs.
+- Always distinguish between what a contact claimed vs what the paperwork proves.
+- When identifying a blocker, look for unanswered tickets or missing documentation.
+- When recommending actions, specify the contact, the commercial value unlocked, and the exact evidence ID.
+- Never invent figures or assume budget exists if financing sign-off is unverified.
+- Always cite evidence IDs in brackets (e.g. [FB-10412], [Email 2026-07-16], [fo_dpia_2], [sr_roi_2], [km_usage_1]).
 
-You are analyzing: ${accountName}
+Account Under Analysis: ${accountName}
 
-STRICT OPERATIONAL RULES:
-1. Only use the data provided in the context below. NEVER invent numbers, revenue figures, people, dates, or documents.
-2. ALWAYS cite evidence IDs in brackets (e.g. [km_usage_1], [fo_dpia_2], [sr_roi_2]) whenever making statements, findings, or recommendations.
-3. Explicitly distinguish between evidence credibility:
-   - "verified" (substantiated by files or flight logs)
-   - "told" (stated by a stakeholder during interviews)
-   - "claim" (unsubstantiated assertion)
-4. Clearly identify blockers and commercial stakes ($ amounts from worth_up_to).
-5. If something is unknown or missing in the records, state clearly: "We do not have evidence for this."
-6. Be concise, strategic, and direct. Format with clean markdown headers and bullet points.
-
-ACCOUNT CONTEXT DATA:
+Context Data:
 ${JSON.stringify(contextData, null, 2)}
 `;
 

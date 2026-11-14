@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
@@ -11,8 +11,9 @@ import {
   Database, 
   Activity, 
   RefreshCw,
+  RotateCw
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, formatCurrency } from '@/lib/utils';
 
 interface SidebarProps {
   onOpenNoteWriter?: () => void;
@@ -21,7 +22,45 @@ interface SidebarProps {
 
 export function Sidebar({ onOpenNoteWriter, onOpenCopilot }: SidebarProps) {
   const pathname = usePathname();
-  const [seeding, setSeeding] = React.useState(false);
+  const [seeding, setSeeding] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+  const [dynamicAccounts, setDynamicAccounts] = useState<any[]>([]);
+
+  const fetchAccounts = async () => {
+    try {
+      const res = await fetch('/api/accounts');
+      if (res.ok) {
+        const json = await res.json();
+        const list = Array.isArray(json) ? json : json.accounts || [];
+        setDynamicAccounts(list);
+      }
+    } catch (e) {
+      console.warn('Sidebar failed to fetch accounts:', e);
+    }
+  };
+
+  useEffect(() => {
+    fetchAccounts();
+  }, [pathname]);
+
+  const handleSync = async () => {
+    try {
+      setSyncing(true);
+      const res = await fetch('/api/sync', { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        await fetchAccounts();
+        alert(`Zero-code sync complete: ${data.message}`);
+        window.location.reload();
+      } else {
+        alert(`Sync error: ${data.error}`);
+      }
+    } catch (e: any) {
+      alert(`Sync failed: ${e.message}`);
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   const handleSeed = async () => {
     try {
@@ -53,23 +92,6 @@ export function Sidebar({ onOpenNoteWriter, onOpenCopilot }: SidebarProps) {
       href: '/accounts',
       icon: Building2,
       active: pathname === '/accounts',
-    },
-  ];
-
-  const accounts = [
-    {
-      id: 'A',
-      name: 'Eastern Counties Police',
-      href: '/accounts/A',
-      pipeline: '$2.30M',
-      badgeColor: 'border-[#D95B28]/40 text-[#EC7D42] bg-[#D95B28]/10',
-    },
-    {
-      id: 'B',
-      name: 'Aldermoor Industrial',
-      href: '/accounts/B',
-      pipeline: '$1.61M',
-      badgeColor: 'border-[#3E6F9E]/40 text-[#7dd3fc] bg-[#3E6F9E]/10',
     },
   ];
 
@@ -121,19 +143,29 @@ export function Sidebar({ onOpenNoteWriter, onOpenCopilot }: SidebarProps) {
           </nav>
         </div>
 
-        {/* Accounts deep dive links */}
+        {/* Dynamic Accounts deep dive links */}
         <div>
           <div className="px-3 mb-2 flex items-center justify-between text-[11px] font-semibold tracking-wider text-[#999999] uppercase">
             <span>Portfolio</span>
-            <span className="text-[#999999] font-mono text-[10px]">2 ACCOUNTS</span>
+            <span className="text-[#999999] font-mono text-[10px]">
+              {dynamicAccounts.length} ACCOUNTS
+            </span>
           </div>
           <div className="space-y-1">
-            {accounts.map((acc) => {
-              const active = pathname === acc.href;
+            {dynamicAccounts.map((acc, idx) => {
+              const href = `/accounts/${acc.id}`;
+              const active = pathname === href;
+              const colorSchemes = [
+                'border-[#D95B28]/40 text-[#EC7D42] bg-[#D95B28]/10',
+                'border-[#3E6F9E]/40 text-[#7dd3fc] bg-[#3E6F9E]/10',
+                'border-[#3A7A65]/40 text-[#5eead4] bg-[#3A7A65]/10',
+              ];
+              const badgeColor = colorSchemes[idx % colorSchemes.length];
+
               return (
                 <Link
                   key={acc.id}
-                  href={acc.href}
+                  href={href}
                   className={cn(
                     'group flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-medium transition-all',
                     active
@@ -142,13 +174,13 @@ export function Sidebar({ onOpenNoteWriter, onOpenCopilot }: SidebarProps) {
                   )}
                 >
                   <div className="flex items-center gap-2 truncate">
-                    <span className={cn('w-5 h-5 rounded flex items-center justify-center font-mono font-bold text-[11px] border', acc.badgeColor)}>
+                    <span className={cn('w-5 h-5 rounded flex items-center justify-center font-mono font-bold text-[11px] border', badgeColor)}>
                       {acc.id}
                     </span>
                     <span className="truncate">{acc.name}</span>
                   </div>
                   <span className="font-mono text-[11px] text-[#999999] group-hover:text-[#D6D6D6]">
-                    {acc.pipeline}
+                    {formatCurrency(acc.pipeline)}
                   </span>
                 </Link>
               );
@@ -162,6 +194,14 @@ export function Sidebar({ onOpenNoteWriter, onOpenCopilot }: SidebarProps) {
             Actions
           </div>
           <div className="space-y-2 px-1">
+            <button
+              onClick={handleSync}
+              disabled={syncing}
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium bg-[#242424] hover:bg-[#2E2E2E] text-[#EC7D42] hover:text-white border border-[#D95B28]/40 transition-colors shadow-sm"
+            >
+              <RotateCw className={cn('h-3.5 w-3.5 text-[#D95B28]', syncing && 'animate-spin')} />
+              <span>{syncing ? 'Auto-Discovering...' : 'Dynamic Sync (MCP)'}</span>
+            </button>
             <button
               onClick={onOpenNoteWriter}
               className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium bg-[#242424] hover:bg-[#2E2E2E] text-[#D6D6D6] hover:text-white border border-[#3D3D3D] transition-colors shadow-sm"
