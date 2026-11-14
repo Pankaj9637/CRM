@@ -25,16 +25,34 @@ export function CopilotDrawer({
   const [selectedAccount, setSelectedAccount] = useState<string>(currentAccountId);
   const [inputMessage, setInputMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [accountsList, setAccountsList] = useState<{ id: string; name: string }[]>([]);
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
       content:
-        'Hello! I am **NEXUS Intelligence Copilot**.\n\nI analyze commercial priorities, stakeholder power maps, and risks strictly using customer facts and flight log records.\n\nAsk me about blockers, financial exposure, stakeholder power dynamics, or evidence credibility.',
+        'Hello! I am **NEXUS Intelligence Copilot**.\n\nI have complete visibility into all accounts across the portfolio, active deal valuations, stakeholder power maps, and underlying forensic flight logs & paperwork.\n\nAsk me to list all accounts, compare blockers across deals, identify high-exposure risks, or inspect verified evidence.',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    async function fetchAccounts() {
+      try {
+        const res = await fetch('/api/accounts');
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setAccountsList(data.map((a: any) => ({ id: a.id, name: a.name })));
+        }
+      } catch (err) {
+        console.warn('Failed to load accounts for Copilot drawer:', err);
+      }
+    }
+    if (isOpen) {
+      fetchAccounts();
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (currentAccountId) {
@@ -99,10 +117,11 @@ export function CopilotDrawer({
   };
 
   const quickPrompts = [
+    'What accounts are currently in our portfolio?',
     'What is our single biggest commercial risk right now?',
+    'Compare blockers and deal status across all accounts',
     'Why is the $200,000 Tarn Valley deal blocked?',
     'Who has the real power on the 35-dock renewal?',
-    'What evidence supports the £1.2M ROI claim?',
   ];
 
   // Helper to render text with clickable evidence pills e.g. [fo_dpia_2]
@@ -169,8 +188,11 @@ export function CopilotDrawer({
             className="text-xs bg-[#1A1A1A] border border-[#3D3D3D] rounded-none px-2 py-1 font-semibold text-[#F0F0F0] focus:outline-none focus:border-[#D95B28]"
           >
             <option value="ALL">All Accounts (Portfolio)</option>
-            <option value="A">Account A: Eastern Counties</option>
-            <option value="B">Account B: Aldermoor Group</option>
+            {accountsList.map((acc) => (
+              <option key={acc.id} value={acc.id}>
+                Account {acc.id}: {acc.name}
+              </option>
+            ))}
           </select>
         </div>
 

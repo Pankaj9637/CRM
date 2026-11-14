@@ -22,6 +22,30 @@ export function NoteWriterModal({
   const [text, setText] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [accountsList, setAccountsList] = useState<{ id: string; name: string }[]>([]);
+
+  React.useEffect(() => {
+    async function fetchAccounts() {
+      try {
+        const res = await fetch('/api/accounts');
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setAccountsList(data.map((a: any) => ({ id: a.id, name: a.name })));
+        }
+      } catch (e) {
+        console.warn('Failed to load accounts for note writer:', e);
+      }
+    }
+    if (isOpen) {
+      fetchAccounts();
+    }
+  }, [isOpen]);
+
+  React.useEffect(() => {
+    if (defaultAccountId) {
+      setAccount(defaultAccountId);
+    }
+  }, [defaultAccountId]);
 
   if (!isOpen) return null;
 
@@ -124,8 +148,18 @@ export function NoteWriterModal({
                 onChange={(e) => setAccount(e.target.value)}
                 className="w-full text-xs bg-[#1A1A1A] border border-[#3D3D3D] rounded-none px-3 py-2 font-medium text-[#F0F0F0] focus:outline-none focus:border-[#D95B28]"
               >
-                <option value="A">Account A: Eastern Counties Police</option>
-                <option value="B">Account B: Aldermoor Industrial Group</option>
+                {accountsList.length > 0 ? (
+                  accountsList.map((acc) => (
+                    <option key={acc.id} value={acc.id}>
+                      Account {acc.id}: {acc.name}
+                    </option>
+                  ))
+                ) : (
+                  <>
+                    <option value="A">Account A: Eastern Counties Police</option>
+                    <option value="B">Account B: Aldermoor Industrial Group</option>
+                  </>
+                )}
               </select>
             </div>
 

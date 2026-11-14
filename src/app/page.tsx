@@ -111,7 +111,7 @@ export default function DashboardPage() {
             </span>
           </div>
           <p className="text-sm text-[#999999] mt-0.5">
-            Real-time synthesis across Eastern Counties Police &amp; Aldermoor Industrial Group
+            Real-time synthesis across {data.accounts?.map((a: any) => a.name).join(' • ') || 'all registered accounts'}
           </p>
         </div>
 
