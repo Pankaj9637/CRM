@@ -46,37 +46,37 @@ export function SignalFeed({ initialSignals, onSignalRefreshed }: SignalFeedProp
   };
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm p-5 space-y-4">
-      <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-        <div className="flex items-center gap-2">
-          <div className="h-6 w-6 rounded-md bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs">
-            <Radio className="h-3.5 w-3.5 animate-pulse text-emerald-600" />
+    <div className="bg-[#242424] rounded-2xl border border-[#3D3D3D] shadow-lg shadow-black/20 p-5 space-y-4">
+      <div className="flex items-center justify-between border-b border-[#3D3D3D] pb-3">
+        <div className="flex items-center gap-2.5">
+          <div className="h-7 w-7 rounded-lg bg-[#3A7A65]/20 text-[#5eead4] border border-[#3A7A65]/40 flex items-center justify-center font-bold text-xs">
+            <Radio className="h-3.5 w-3.5 animate-pulse text-[#3A7A65]" />
           </div>
           <div>
-            <h2 className="text-sm font-bold text-slate-900">Live MCP Signal Feed</h2>
-            <p className="text-xs text-slate-500">Real-time alerts via MCP get_signals</p>
+            <h2 className="text-sm font-bold text-[#F0F0F0]">Live MCP Signal Feed</h2>
+            <p className="text-xs text-[#999999]">Real-time alerts via MCP get_signals</p>
           </div>
         </div>
 
         <button
           onClick={handleRefresh}
           disabled={refreshing}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors border border-slate-200 shadow-sm"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#F0F0F0] bg-[#2E2E2E] hover:bg-[#3D3D3D] rounded-lg transition-colors border border-[#3D3D3D] shadow-xs"
         >
-          <RefreshCw className={`h-3 w-3 ${refreshing ? 'animate-spin text-indigo-600' : ''}`} />
+          <RefreshCw className={`h-3 w-3 ${refreshing ? 'animate-spin text-[#D95B28]' : ''}`} />
           <span>{refreshing ? 'Calling MCP...' : 'Refresh Signals'}</span>
         </button>
       </div>
 
       {statusMessage && (
-        <div className="p-2 rounded bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-medium flex items-center gap-1.5">
-          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+        <div className="p-2 rounded-lg bg-[#3A7A65]/20 border border-[#3A7A65]/40 text-[#5eead4] text-xs font-medium flex items-center gap-1.5">
+          <CheckCircle2 className="h-3.5 w-3.5 text-[#5eead4] shrink-0" />
           <span>{statusMessage}</span>
         </div>
       )}
 
       {signals.length === 0 ? (
-        <div className="p-6 text-center text-xs text-slate-400 bg-slate-50 rounded-lg border border-dashed border-slate-200">
+        <div className="p-6 text-center text-xs text-[#999999] bg-[#1A1A1A] rounded-xl border border-dashed border-[#3D3D3D]">
           No live signals detected yet. Click &ldquo;Refresh Signals&rdquo; to poll MCP.
         </div>
       ) : (
@@ -84,20 +84,20 @@ export function SignalFeed({ initialSignals, onSignalRefreshed }: SignalFeedProp
           {signals.map((sig) => (
             <div
               key={sig.id}
-              className="p-3 rounded-lg border border-slate-100 bg-slate-50/60 hover:bg-white transition-colors flex items-start gap-3"
+              className="p-3 rounded-xl border border-[#3D3D3D] bg-[#2E2E2E]/60 hover:bg-[#2E2E2E] transition-colors flex items-start gap-3"
             >
-              <span className="w-6 h-6 rounded flex items-center justify-center font-mono font-bold text-[10px] bg-slate-900 text-white shrink-0 mt-0.5">
+              <span className="w-6 h-6 rounded flex items-center justify-center font-mono font-bold text-[10px] bg-[#1A1A1A] text-[#EC7D42] border border-[#3D3D3D] shrink-0 mt-0.5">
                 {sig.account_id || 'A'}
               </span>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="font-mono text-[10px] text-slate-400 font-semibold">{sig.id}</span>
-                  <div className="flex items-center gap-1 text-[10px] text-slate-400 font-mono">
+                  <span className="font-mono text-[10px] text-[#999999] font-semibold">{sig.id}</span>
+                  <div className="flex items-center gap-1 text-[10px] text-[#999999] font-mono">
                     <Clock className="h-2.5 w-2.5" />
                     <span>{new Date(sig.fetched_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                   </div>
                 </div>
-                <p className="text-xs text-slate-800 font-medium mt-1 leading-relaxed">
+                <p className="text-xs text-[#D6D6D6] font-medium mt-1 leading-relaxed">
                   {sig.text}
                 </p>
               </div>

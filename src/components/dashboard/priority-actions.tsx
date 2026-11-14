@@ -3,7 +3,7 @@
 import React from 'react';
 import { Badge } from '@/components/badge';
 import { formatCurrency } from '@/lib/utils';
-import { ArrowUpRight, Clock, AlertCircle, User, CheckCircle2 } from 'lucide-react';
+import { ArrowUpRight, User } from 'lucide-react';
 import Link from 'next/link';
 
 interface PriorityActionItem {
@@ -41,75 +41,75 @@ export function PriorityActions({ actions, onInspectEvidence }: PriorityActionsP
   };
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
-      <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-        <div className="flex items-center gap-2">
-          <div className="h-6 w-6 rounded-md bg-rose-100 text-rose-700 flex items-center justify-center font-bold text-xs">
+    <div className="bg-[#242424] rounded-2xl border border-[#3D3D3D] shadow-lg shadow-black/20 overflow-hidden">
+      <div className="px-5 py-4 border-b border-[#3D3D3D] flex items-center justify-between bg-[#2E2E2E]/60">
+        <div className="flex items-center gap-2.5">
+          <div className="h-7 w-7 rounded-lg bg-[#D95B28]/20 text-[#EC7D42] border border-[#D95B28]/40 flex items-center justify-center font-bold text-xs">
             ⚡
           </div>
           <div>
-            <h2 className="text-sm font-bold text-slate-800">Priority Next Actions</h2>
-            <p className="text-xs text-slate-500">AI-ranked by commercial exposure and urgency</p>
+            <h2 className="text-sm font-bold text-[#F0F0F0]">Priority Next Actions</h2>
+            <p className="text-xs text-[#999999]">AI-ranked by commercial exposure and urgency</p>
           </div>
         </div>
-        <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">
+        <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-[#1A1A1A] text-[#D6D6D6] border border-[#3D3D3D]">
           TOP 5 ACTIONS
         </span>
       </div>
 
-      <div className="divide-y divide-slate-100">
+      <div className="divide-y divide-[#3D3D3D]">
         {actions.map((act) => (
           <div
             key={act.id || act.priority}
-            className="p-4 hover:bg-slate-50/70 transition-colors group flex flex-col sm:flex-row sm:items-start justify-between gap-4"
+            className="p-4 hover:bg-[#2E2E2E]/50 transition-colors group flex flex-col sm:flex-row sm:items-start justify-between gap-4"
           >
             <div className="flex items-start gap-3 flex-1">
-              <span className="shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 text-slate-700 font-mono font-bold text-xs border border-slate-200 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-600 transition-colors">
+              <span className="shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-[#1A1A1A] text-[#D6D6D6] font-mono font-bold text-xs border border-[#3D3D3D] group-hover:bg-[#D95B28] group-hover:text-white group-hover:border-[#D95B28] transition-colors">
                 {act.priority}
               </span>
 
               <div className="space-y-1.5 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-bold text-slate-900 text-sm">{act.action}</span>
+                  <span className="font-bold text-[#F0F0F0] text-sm">{act.action}</span>
                   {getUrgencyBadge(act.urgency)}
                 </div>
 
-                <p className="text-xs text-slate-600 leading-relaxed font-medium">
+                <p className="text-xs text-[#D6D6D6] leading-relaxed font-normal">
                   {act.reason}
                 </p>
 
-                <div className="flex flex-wrap items-center gap-y-1 gap-x-3 text-xs text-slate-500 pt-1">
-                  <div className="flex items-center gap-1 font-medium text-slate-700">
-                    <User className="h-3.5 w-3.5 text-slate-400" />
-                    <span>Engage: <strong className="text-slate-900">{act.contact}</strong></span>
+                <div className="flex flex-wrap items-center gap-y-1 gap-x-3 text-xs text-[#999999] pt-1">
+                  <div className="flex items-center gap-1 font-medium text-[#D6D6D6]">
+                    <User className="h-3.5 w-3.5 text-[#999999]" />
+                    <span>Engage: <strong className="text-[#F0F0F0]">{act.contact}</strong></span>
                   </div>
 
-                  <span className="text-slate-300">•</span>
+                  <span className="text-[#3D3D3D]">•</span>
 
                   <Link
                     href={`/accounts/${act.account_id}`}
-                    className="text-indigo-600 hover:text-indigo-800 font-semibold inline-flex items-center gap-0.5"
+                    className="text-[#EC7D42] hover:text-[#D95B28] font-semibold inline-flex items-center gap-0.5"
                   >
                     <span>{act.deal_title}</span>
                     <ArrowUpRight className="h-3 w-3" />
                   </Link>
 
-                  <span className="text-slate-300">•</span>
+                  <span className="text-[#3D3D3D]">•</span>
 
-                  <span className="font-mono text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200/60">
+                  <span className="font-mono text-[#5eead4] font-bold bg-[#3A7A65]/20 px-2 py-0.5 rounded border border-[#3A7A65]/40">
                     {formatCurrency(act.impact_value)} at stake
                   </span>
                 </div>
 
                 {act.evidence_ids && act.evidence_ids.length > 0 && (
-                  <div className="flex items-center gap-1.5 pt-1 text-[11px] text-slate-500">
-                    <span className="text-[10px] font-semibold uppercase text-slate-400">Evidence:</span>
+                  <div className="flex items-center gap-1.5 pt-1 text-[11px] text-[#999999]">
+                    <span className="text-[10px] font-semibold uppercase text-[#8A8A8A]">Evidence:</span>
                     <div className="flex flex-wrap gap-1">
                       {act.evidence_ids.map((evId) => (
                         <button
                           key={evId}
                           onClick={() => onInspectEvidence?.(evId)}
-                          className="px-1.5 py-0.2 rounded font-mono font-semibold text-[10px] bg-slate-100 hover:bg-indigo-50 text-slate-600 hover:text-indigo-700 border border-slate-200 transition-colors"
+                          className="px-1.5 py-0.2 rounded font-mono font-semibold text-[10px] bg-[#1A1A1A] hover:bg-[#D95B28]/20 text-[#D6D6D6] hover:text-[#EC7D42] border border-[#3D3D3D] transition-colors"
                         >
                           [{evId}]
                         </button>
@@ -123,7 +123,7 @@ export function PriorityActions({ actions, onInspectEvidence }: PriorityActionsP
             <div className="shrink-0 flex items-center self-end sm:self-center">
               <Link
                 href={`/accounts/${act.account_id}`}
-                className="px-3 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-indigo-600 hover:text-white rounded-lg transition-colors border border-slate-200"
+                className="px-3.5 py-1.5 text-xs font-semibold text-white bg-[#D95B28] hover:bg-[#A33D14] rounded-lg transition-colors border border-[#D95B28] shadow-sm shadow-[#D95B28]/20"
               >
                 Execute Action →
               </Link>

@@ -12,7 +12,6 @@ import { EvidenceTab } from '@/components/account/evidence-tab';
 import { EvidenceInspectorModal, FactData } from '@/components/evidence-inspector';
 import { NoteWriterModal } from '@/components/note-writer-modal';
 import { CopilotDrawer } from '@/components/copilot-drawer';
-import { formatCurrency } from '@/lib/utils';
 import { Badge } from '@/components/badge';
 import { 
   Building2, 
@@ -25,10 +24,8 @@ import {
   Zap, 
   ShieldAlert, 
   FileSearch,
-  CheckCircle2,
   AlertTriangle
 } from 'lucide-react';
-import seedData from '@/data/seed.json';
 
 type TabKey = 'overview' | 'deals' | 'people' | 'actions' | 'risks' | 'evidence';
 
@@ -101,23 +98,23 @@ export default function AccountDetailPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-3">
-        <RefreshCw className="h-8 w-8 text-indigo-600 animate-spin" />
-        <p className="text-sm font-semibold text-slate-600">Loading Account Deep-Dive...</p>
+        <RefreshCw className="h-8 w-8 text-[#D95B28] animate-spin" />
+        <p className="text-sm font-semibold text-[#D6D6D6]">Loading Account Deep-Dive...</p>
       </div>
     );
   }
 
   if (!data || !data.account) {
     return (
-      <div className="p-8 text-center bg-white rounded-xl border border-rose-200">
-        <AlertTriangle className="h-8 w-8 text-rose-600 mx-auto mb-2" />
-        <h3 className="text-base font-bold text-slate-900">Account Not Found</h3>
-        <p className="text-xs text-slate-500 mt-1">
+      <div className="p-8 text-center bg-[#242424] rounded-2xl border border-[#F43F5E]/40">
+        <AlertTriangle className="h-8 w-8 text-[#F43F5E] mx-auto mb-2" />
+        <h3 className="text-base font-bold text-[#F0F0F0]">Account Not Found</h3>
+        <p className="text-xs text-[#999999] mt-1">
           Account ID &ldquo;{accountId}&rdquo; does not exist in the database.
         </p>
         <Link
           href="/accounts"
-          className="mt-4 inline-block px-4 py-2 text-xs font-semibold bg-indigo-600 text-white rounded-lg"
+          className="mt-4 inline-block px-4 py-2 text-xs font-semibold bg-[#D95B28] text-white rounded-xl shadow-md shadow-[#D95B28]/25"
         >
           Return to Accounts Portfolio
         </Link>
@@ -125,7 +122,7 @@ export default function AccountDetailPage() {
     );
   }
 
-  const { account, contacts, facts, deals, offers, actions, risks, unknowns, notes, deal_contacts } = data;
+  const { account, contacts, facts, deals, offers, actions, risks, unknowns, deal_contacts } = data;
 
   const tabs: { key: TabKey; label: string; question: string; icon: any; count?: number }[] = [
     { key: 'overview', label: 'Overview', question: 'Executive Summary', icon: Layers },
@@ -141,33 +138,33 @@ export default function AccountDetailPage() {
       {/* Top Breadcrumb & Switcher */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-2 text-xs">
-          <Link href="/accounts" className="text-slate-500 hover:text-slate-900 font-medium flex items-center gap-1">
+          <Link href="/accounts" className="text-[#999999] hover:text-[#F0F0F0] font-medium flex items-center gap-1 transition-colors">
             <ArrowLeft className="h-3.5 w-3.5" />
             <span>Accounts Portfolio</span>
           </Link>
-          <span className="text-slate-300">/</span>
-          <span className="font-semibold text-slate-800">{account.name}</span>
+          <span className="text-[#3D3D3D]">/</span>
+          <span className="font-semibold text-[#F0F0F0]">{account.name}</span>
         </div>
 
         {/* Quick Account Switcher Pill */}
-        <div className="flex items-center gap-1.5 p-1 bg-white border border-slate-200 rounded-lg shadow-2xs self-start">
-          <span className="text-[11px] font-semibold text-slate-400 px-2 uppercase">Switch:</span>
+        <div className="flex items-center gap-1.5 p-1 bg-[#242424] border border-[#3D3D3D] rounded-xl shadow-xs self-start">
+          <span className="text-[11px] font-semibold text-[#8A8A8A] px-2 uppercase">Switch:</span>
           <button
             onClick={() => router.push('/accounts/A')}
-            className={`px-2.5 py-1 text-xs font-bold rounded ${
+            className={`px-3 py-1 text-xs font-bold rounded-lg transition-colors ${
               accountId === 'A'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'text-slate-600 hover:bg-slate-100'
+                ? 'bg-[#D95B28] text-white shadow-sm'
+                : 'text-[#D6D6D6] hover:bg-[#2E2E2E]'
             }`}
           >
             A: Eastern Counties
           </button>
           <button
             onClick={() => router.push('/accounts/B')}
-            className={`px-2.5 py-1 text-xs font-bold rounded ${
+            className={`px-3 py-1 text-xs font-bold rounded-lg transition-colors ${
               accountId === 'B'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'text-slate-600 hover:bg-slate-100'
+                ? 'bg-[#D95B28] text-white shadow-sm'
+                : 'text-[#D6D6D6] hover:bg-[#2E2E2E]'
             }`}
           >
             B: Aldermoor Group
@@ -176,20 +173,20 @@ export default function AccountDetailPage() {
       </div>
 
       {/* Account Workspace Header Banner */}
-      <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-6 space-y-4">
+      <div className="bg-[#242424] rounded-2xl border border-[#3D3D3D] shadow-lg shadow-black/20 p-6 space-y-4">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="flex items-start gap-4">
-            <span className="w-12 h-12 rounded-xl bg-slate-950 text-white font-mono font-bold text-lg flex items-center justify-center shadow">
+            <span className="w-12 h-12 rounded-xl bg-[#1A1A1A] text-[#EC7D42] border border-[#D95B28]/40 font-mono font-bold text-lg flex items-center justify-center shadow-md">
               {account.id}
             </span>
             <div>
               <div className="flex items-center gap-2.5 flex-wrap">
-                <h1 className="text-xl font-bold text-slate-900">{account.name}</h1>
+                <h1 className="text-xl font-bold text-[#F0F0F0]">{account.name}</h1>
                 <Badge variant="default" size="sm">
                   {deals.length} OPPORTUNITIES
                 </Badge>
               </div>
-              <p className="text-xs text-slate-500 mt-1 max-w-2xl leading-relaxed">
+              <p className="text-xs text-[#999999] mt-1 max-w-2xl leading-relaxed">
                 {account.official_story}
               </p>
             </div>
@@ -199,23 +196,23 @@ export default function AccountDetailPage() {
           <div className="flex items-center gap-2 self-start lg:self-center">
             <button
               onClick={() => setIsNoteWriterOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-lg transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-[#D6D6D6] bg-[#2E2E2E] hover:bg-[#3D3D3D] border border-[#3D3D3D] rounded-xl transition-colors"
             >
-              <PenLine className="h-3.5 w-3.5 text-indigo-600" />
+              <PenLine className="h-3.5 w-3.5 text-[#D95B28]" />
               <span>Log Note</span>
             </button>
             <button
               onClick={() => setIsCopilotOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm transition-all"
+              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-[#D95B28] hover:bg-[#A33D14] rounded-xl shadow-md shadow-[#D95B28]/25 transition-all"
             >
-              <Sparkles className="h-3.5 w-3.5 text-indigo-200" />
+              <Sparkles className="h-3.5 w-3.5 text-white" />
               <span>Ask Copilot about Account {accountId}</span>
             </button>
           </div>
         </div>
 
         {/* Tab Navigation Bar */}
-        <div className="flex overflow-x-auto gap-2 border-t border-slate-100 pt-4 scrollbar-none">
+        <div className="flex overflow-x-auto gap-2 border-t border-[#3D3D3D] pt-4 scrollbar-none">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.key;
@@ -225,16 +222,16 @@ export default function AccountDetailPage() {
                 onClick={() => setActiveTab(tab.key)}
                 className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
                   isActive
-                    ? 'bg-slate-900 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    ? 'bg-[#D95B28] text-white shadow-md shadow-[#D95B28]/20'
+                    : 'text-[#999999] hover:text-[#F0F0F0] hover:bg-[#2E2E2E]'
                 }`}
               >
-                <Icon className={`h-3.5 w-3.5 ${isActive ? 'text-indigo-400' : 'text-slate-400'}`} />
+                <Icon className={`h-3.5 w-3.5 ${isActive ? 'text-white' : 'text-[#8A8A8A]'}`} />
                 <span>{tab.label}</span>
                 {tab.count !== undefined && (
                   <span
                     className={`ml-1 text-[10px] font-mono px-1.5 py-0.2 rounded-full ${
-                      isActive ? 'bg-slate-800 text-indigo-300' : 'bg-slate-200/80 text-slate-600'
+                      isActive ? 'bg-black/30 text-white' : 'bg-[#1A1A1A] text-[#999999] border border-[#3D3D3D]'
                     }`}
                   >
                     {tab.count}

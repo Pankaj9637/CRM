@@ -6,14 +6,11 @@ import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, 
   Building2, 
-  ShieldAlert, 
   Sparkles, 
   PenLine, 
   Database, 
-  Cpu, 
   Activity, 
   RefreshCw,
-  ChevronRight
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -65,33 +62,33 @@ export function Sidebar({ onOpenNoteWriter, onOpenCopilot }: SidebarProps) {
       name: 'Eastern Counties Police',
       href: '/accounts/A',
       pipeline: '$2.30M',
-      badgeColor: 'border-blue-500/30 text-blue-400 bg-blue-500/10',
+      badgeColor: 'border-[#D95B28]/40 text-[#EC7D42] bg-[#D95B28]/10',
     },
     {
       id: 'B',
       name: 'Aldermoor Industrial',
       href: '/accounts/B',
       pipeline: '$1.61M',
-      badgeColor: 'border-purple-500/30 text-purple-400 bg-purple-500/10',
+      badgeColor: 'border-[#3E6F9E]/40 text-[#7dd3fc] bg-[#3E6F9E]/10',
     },
   ];
 
   return (
-    <aside className="w-64 bg-slate-950 text-slate-200 border-r border-slate-800 flex flex-col h-screen sticky top-0 select-none z-30">
+    <aside className="w-64 bg-[#1A1A1A] text-[#D6D6D6] border-r border-[#3D3D3D] flex flex-col h-screen sticky top-0 select-none z-30">
       {/* Brand Header */}
-      <div className="p-5 border-b border-slate-800/80">
+      <div className="p-5 border-b border-[#3D3D3D]">
         <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+          <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-[#A33D14] via-[#D95B28] to-[#EC7D42] flex items-center justify-center shadow-lg shadow-[#D95B28]/25">
             <Sparkles className="h-5 w-5 text-white" />
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="font-bold text-lg tracking-wider text-white">NEXUS</span>
-              <span className="text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                AI CRM
+              <span className="font-bold text-lg tracking-wider text-[#F0F0F0]">NEXUS</span>
+              <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-[#D95B28]/20 text-[#EC7D42] border border-[#D95B28]/40">
+                EMBER
               </span>
             </div>
-            <p className="text-xs text-slate-400 font-medium">Account Intelligence</p>
+            <p className="text-xs text-[#999999] font-medium">Account Intelligence</p>
           </div>
         </div>
       </div>
@@ -99,8 +96,8 @@ export function Sidebar({ onOpenNoteWriter, onOpenCopilot }: SidebarProps) {
       {/* Main Navigation */}
       <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
         <div>
-          <div className="px-3 mb-2 text-[11px] font-semibold tracking-wider text-slate-400 uppercase">
-            Intelligence
+          <div className="px-3 mb-2 text-[11px] font-semibold tracking-wider text-[#999999] uppercase">
+            Intelligence Hub
           </div>
           <nav className="space-y-1">
             {navItems.map((item) => {
@@ -112,11 +109,11 @@ export function Sidebar({ onOpenNoteWriter, onOpenCopilot }: SidebarProps) {
                   className={cn(
                     'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                     item.active
-                      ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-900/80'
+                      ? 'bg-[#2E2E2E] text-[#F0F0F0] border border-[#3D3D3D] shadow-sm'
+                      : 'text-[#999999] hover:text-[#F0F0F0] hover:bg-[#242424]'
                   )}
                 >
-                  <Icon className={cn('h-4 w-4', item.active ? 'text-indigo-400' : 'text-slate-400')} />
+                  <Icon className={cn('h-4 w-4', item.active ? 'text-[#D95B28]' : 'text-[#999999]')} />
                   <span>{item.title}</span>
                 </Link>
               );
@@ -126,9 +123,9 @@ export function Sidebar({ onOpenNoteWriter, onOpenCopilot }: SidebarProps) {
 
         {/* Accounts deep dive links */}
         <div>
-          <div className="px-3 mb-2 flex items-center justify-between text-[11px] font-semibold tracking-wider text-slate-400 uppercase">
-            <span>Accounts</span>
-            <span className="text-slate-400 font-mono text-[10px]">2 ACCOUNTS</span>
+          <div className="px-3 mb-2 flex items-center justify-between text-[11px] font-semibold tracking-wider text-[#999999] uppercase">
+            <span>Portfolio</span>
+            <span className="text-[#999999] font-mono text-[10px]">2 ACCOUNTS</span>
           </div>
           <div className="space-y-1">
             {accounts.map((acc) => {
@@ -140,8 +137,8 @@ export function Sidebar({ onOpenNoteWriter, onOpenCopilot }: SidebarProps) {
                   className={cn(
                     'group flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-medium transition-all',
                     active
-                      ? 'bg-slate-900 text-white border border-slate-700 shadow-sm'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-900/60'
+                      ? 'bg-[#2E2E2E] text-[#F0F0F0] border border-[#D95B28]/60 shadow-sm'
+                      : 'text-[#999999] hover:text-[#F0F0F0] hover:bg-[#242424]'
                   )}
                 >
                   <div className="flex items-center gap-2 truncate">
@@ -150,7 +147,7 @@ export function Sidebar({ onOpenNoteWriter, onOpenCopilot }: SidebarProps) {
                     </span>
                     <span className="truncate">{acc.name}</span>
                   </div>
-                  <span className="font-mono text-[11px] text-slate-400 group-hover:text-slate-200">
+                  <span className="font-mono text-[11px] text-[#999999] group-hover:text-[#D6D6D6]">
                     {acc.pipeline}
                   </span>
                 </Link>
@@ -159,24 +156,24 @@ export function Sidebar({ onOpenNoteWriter, onOpenCopilot }: SidebarProps) {
           </div>
         </div>
 
-        {/* Quick Actions */}
+        {/* Quick Tools */}
         <div>
-          <div className="px-3 mb-2 text-[11px] font-semibold tracking-wider text-slate-400 uppercase">
-            Quick Tools
+          <div className="px-3 mb-2 text-[11px] font-semibold tracking-wider text-[#999999] uppercase">
+            Actions
           </div>
           <div className="space-y-2 px-1">
             <button
               onClick={onOpenNoteWriter}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 transition-colors shadow-sm"
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium bg-[#242424] hover:bg-[#2E2E2E] text-[#D6D6D6] hover:text-white border border-[#3D3D3D] transition-colors shadow-sm"
             >
-              <PenLine className="h-3.5 w-3.5 text-indigo-400" />
+              <PenLine className="h-3.5 w-3.5 text-[#D95B28]" />
               <span>Write Note (MCP Sync)</span>
             </button>
             <button
               onClick={onOpenCopilot}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium bg-gradient-to-r from-indigo-950/80 to-slate-900 hover:from-indigo-900/90 text-indigo-200 border border-indigo-900/60 transition-all shadow-sm"
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold bg-gradient-to-r from-[#D95B28] to-[#EC7D42] hover:from-[#A33D14] hover:to-[#D95B28] text-white shadow-md shadow-[#D95B28]/20 transition-all"
             >
-              <Sparkles className="h-3.5 w-3.5 text-indigo-400 animate-pulse" />
+              <Sparkles className="h-3.5 w-3.5 text-white animate-pulse" />
               <span>Ask NEXUS Copilot</span>
             </button>
           </div>
@@ -184,37 +181,37 @@ export function Sidebar({ onOpenNoteWriter, onOpenCopilot }: SidebarProps) {
       </div>
 
       {/* System Status & Footer */}
-      <div className="p-3 border-t border-slate-800/80 bg-slate-950/90 space-y-2">
-        <div className="bg-slate-900/90 rounded-lg p-2.5 border border-slate-800 text-[11px] space-y-1.5">
-          <div className="flex items-center justify-between text-slate-300">
+      <div className="p-3 border-t border-[#3D3D3D] bg-[#1A1A1A] space-y-2">
+        <div className="bg-[#242424] rounded-lg p-2.5 border border-[#3D3D3D] text-[11px] space-y-1.5">
+          <div className="flex items-center justify-between text-[#D6D6D6]">
             <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>MCP Connector</span>
+              <span className="h-2 w-2 rounded-full bg-[#3A7A65] animate-pulse" />
+              <span>MCP Protocol</span>
             </span>
-            <span className="font-mono text-[10px] text-emerald-400">ONLINE</span>
+            <span className="font-mono text-[10px] text-[#5eead4]">ONLINE</span>
           </div>
-          <div className="flex items-center justify-between text-slate-300">
+          <div className="flex items-center justify-between text-[#D6D6D6]">
             <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-indigo-400" />
+              <span className="h-2 w-2 rounded-full bg-[#D95B28]" />
               <span>Gemini 2.5 Flash</span>
             </span>
-            <span className="font-mono text-[10px] text-indigo-400">READY</span>
+            <span className="font-mono text-[10px] text-[#EC7D42]">READY</span>
           </div>
-          <div className="flex items-center justify-between text-slate-300">
+          <div className="flex items-center justify-between text-[#D6D6D6]">
             <span className="flex items-center gap-1.5">
-              <Database className="h-3 w-3 text-cyan-400" />
-              <span>Turso/libSQL</span>
+              <Database className="h-3 w-3 text-[#3E6F9E]" />
+              <span>Turso/SQLite</span>
             </span>
-            <span className="font-mono text-[10px] text-cyan-400">ACTIVE</span>
+            <span className="font-mono text-[10px] text-[#7dd3fc]">ACTIVE</span>
           </div>
         </div>
 
         <button
           onClick={handleSeed}
           disabled={seeding}
-          className="w-full flex items-center justify-center gap-1.5 py-1.5 text-[11px] font-medium text-slate-400 hover:text-white transition-colors"
+          className="w-full flex items-center justify-center gap-1.5 py-1.5 text-[11px] font-medium text-[#999999] hover:text-[#F0F0F0] transition-colors"
         >
-          <RefreshCw className={cn('h-3 w-3', seeding && 'animate-spin text-indigo-400')} />
+          <RefreshCw className={cn('h-3 w-3', seeding && 'animate-spin text-[#D95B28]')} />
           <span>{seeding ? 'Seeding Database...' : 'Re-Seed Database'}</span>
         </button>
       </div>

@@ -15,6 +15,7 @@ export type BadgeVariant =
   | 'open'
   | 'cleared'
   | 'won'
+  | 'brand'
   | 'default';
 
 interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
@@ -32,44 +33,45 @@ export function Badge({
   const getVariantStyles = (v: string) => {
     switch (v.toLowerCase()) {
       case 'verified':
-        return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-      case 'told':
-        return 'bg-amber-50 text-amber-700 border-amber-200';
-      case 'claim':
-        return 'bg-orange-50 text-orange-700 border-orange-200';
-      case 'unknown':
-        return 'bg-slate-100 text-slate-600 border-slate-200';
-      case 'ally':
-        return 'bg-emerald-100 text-emerald-800 border-emerald-300';
-      case 'warm':
-        return 'bg-sky-100 text-sky-800 border-sky-300';
-      case 'neutral':
-        return 'bg-slate-100 text-slate-700 border-slate-300';
-      case 'critical':
-      case 'immediate':
-        return 'bg-rose-100 text-rose-800 border-rose-300 font-semibold';
-      case 'high':
-      case 'this_week':
-        return 'bg-amber-100 text-amber-800 border-amber-300 font-medium';
-      case 'medium':
-      case 'this_month':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-300';
-      case 'open':
-        return 'bg-rose-50 text-rose-700 border-rose-200 font-medium';
       case 'cleared':
       case 'won':
-        return 'bg-emerald-50 text-emerald-700 border-emerald-200 font-medium';
+        return 'bg-[#3A7A65]/20 text-[#5eead4] border-[#3A7A65]/50';
+      case 'told':
+        return 'bg-[#D9A441]/20 text-[#fde047] border-[#D9A441]/50';
+      case 'claim':
+        return 'bg-[#EC7D42]/20 text-[#fdba74] border-[#EC7D42]/50';
+      case 'unknown':
+        return 'bg-[#2E2E2E] text-[#999999] border-[#3D3D3D]';
+      case 'ally':
+        return 'bg-[#3A7A65]/25 text-[#4ade80] border-[#3A7A65]/60';
+      case 'warm':
+        return 'bg-[#3E6F9E]/25 text-[#7dd3fc] border-[#3E6F9E]/60';
+      case 'neutral':
+        return 'bg-[#2E2E2E] text-[#a3a3a3] border-[#3D3D3D]';
+      case 'critical':
+      case 'danger':
+      case 'open':
+      case 'immediate':
+        return 'bg-[#F43F5E]/20 text-[#fda4af] border-[#F43F5E]/50 font-semibold';
+      case 'high':
+      case 'this_week':
+        return 'bg-[#D95B28]/25 text-[#ffedd5] border-[#D95B28]/60 font-semibold';
+      case 'medium':
+      case 'this_month':
+        return 'bg-[#D9A441]/20 text-[#fef08a] border-[#D9A441]/50';
+      case 'brand':
+        return 'bg-[#D95B28] text-white border-[#D95B28] font-semibold';
       default:
-        return 'bg-slate-100 text-slate-700 border-slate-200';
+        return 'bg-[#2E2E2E] text-[#D6D6D6] border-[#3D3D3D]';
     }
   };
 
-  const sizeStyles = size === 'sm' ? 'px-2 py-0.5 text-xs' : 'px-2.5 py-1 text-xs';
+  const sizeStyles = size === 'sm' ? 'px-2 py-0.5 text-[11px]' : 'px-2.5 py-1 text-xs';
 
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 rounded-full border font-medium transition-colors',
+        'inline-flex items-center gap-1 rounded-full border font-medium transition-colors tracking-wide',
         getVariantStyles(variant),
         sizeStyles,
         className

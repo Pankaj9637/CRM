@@ -6,7 +6,7 @@ import { Sidebar } from '@/components/sidebar';
 import { CopilotDrawer } from '@/components/copilot-drawer';
 import { NoteWriterModal } from '@/components/note-writer-modal';
 import { EvidenceInspectorModal, FactData } from '@/components/evidence-inspector';
-import { Sparkles, PenLine, RefreshCw, Radio } from 'lucide-react';
+import { Sparkles, PenLine } from 'lucide-react';
 import seedData from '@/data/seed.json';
 
 export default function RootLayout({
@@ -36,7 +36,6 @@ export default function RootLayout({
       setInspectFact(found);
       setIsInspectorOpen(true);
     } else {
-      // Check if it's a file
       const foundFile = (seedData.files || []).find((file) => file.id === evidenceId);
       if (foundFile) {
         setInspectFact({
@@ -60,12 +59,12 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <head>
-        <title>NEXUS — AI Account Intelligence CRM</title>
-        <meta name="description" content="AI-powered Account Intelligence CRM for enterprise deal execution" />
+        <title>NEXUS — AI Account Intelligence CRM (Ember Dark)</title>
+        <meta name="description" content="Ember Dark theme AI-powered Account Intelligence CRM for enterprise deal execution" />
       </head>
-      <body className="flex min-h-screen bg-slate-50 text-slate-900 antialiased font-sans">
+      <body className="flex min-h-screen bg-[#1A1A1A] text-[#D6D6D6] antialiased selection:bg-[#D95B28] selection:text-white">
         {/* Left Dark Navigation Sidebar */}
         <Sidebar
           onOpenNoteWriter={() => setIsNoteWriterOpen(true)}
@@ -73,16 +72,16 @@ export default function RootLayout({
         />
 
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col min-w-0">
+        <div className="flex-1 flex flex-col min-w-0 bg-[#1A1A1A]">
           {/* Top Bar */}
-          <header className="h-14 border-b border-slate-200 bg-white/90 backdrop-blur sticky top-0 z-20 px-6 flex items-center justify-between">
+          <header className="h-14 border-b border-[#3D3D3D] bg-[#1A1A1A]/90 backdrop-blur sticky top-0 z-20 px-6 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="text-xs font-semibold text-slate-500">Workspace:</span>
-              <span className="text-xs font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+              <span className="text-xs font-semibold text-[#999999]">Workspace:</span>
+              <span className="text-xs font-bold text-[#F0F0F0] bg-[#242424] px-2 py-0.5 rounded-md border border-[#3D3D3D]">
                 FlytBase Alliance Portfolio
               </span>
-              <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] text-[#5eead4] font-semibold bg-[#3A7A65]/20 px-2.5 py-0.5 rounded-full border border-[#3A7A65]/40">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#3A7A65] animate-pulse" />
                 <span>Live Ingestion Active</span>
               </span>
             </div>
@@ -90,17 +89,17 @@ export default function RootLayout({
             <div className="flex items-center gap-2.5">
               <button
                 onClick={() => setIsNoteWriterOpen(true)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-300 shadow-xs transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-[#D6D6D6] bg-[#242424] hover:bg-[#2E2E2E] border border-[#3D3D3D] transition-colors"
               >
-                <PenLine className="h-3.5 w-3.5 text-indigo-600" />
+                <PenLine className="h-3.5 w-3.5 text-[#D95B28]" />
                 <span>Log Note (Write-Back)</span>
               </button>
 
               <button
                 onClick={() => setIsCopilotOpen(true)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm transition-all"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold text-white bg-[#D95B28] hover:bg-[#A33D14] shadow-sm shadow-[#D95B28]/25 transition-all"
               >
-                <Sparkles className="h-3.5 w-3.5 text-indigo-200" />
+                <Sparkles className="h-3.5 w-3.5 text-white" />
                 <span>NEXUS Copilot</span>
               </button>
             </div>
@@ -115,12 +114,12 @@ export default function RootLayout({
         {/* Global Floating Copilot Button (Bottom Right) */}
         <button
           onClick={() => setIsCopilotOpen(true)}
-          className="fixed bottom-6 right-6 z-40 flex items-center gap-2.5 px-4 py-3 bg-slate-950 hover:bg-slate-900 text-white rounded-full shadow-2xl border border-indigo-500/40 hover:border-indigo-400 transition-all hover:scale-105 active:scale-95 group"
+          className="fixed bottom-6 right-6 z-40 flex items-center gap-2.5 px-4 py-3 bg-[#242424] hover:bg-[#2E2E2E] text-white rounded-full shadow-2xl border border-[#D95B28]/60 hover:border-[#D95B28] transition-all hover:scale-105 active:scale-95 group shadow-black/50"
         >
-          <div className="h-6 w-6 rounded-full bg-indigo-600 flex items-center justify-center">
+          <div className="h-6 w-6 rounded-full bg-[#D95B28] flex items-center justify-center">
             <Sparkles className="h-3.5 w-3.5 text-white animate-pulse" />
           </div>
-          <span className="text-xs font-bold tracking-wide">Ask NEXUS Copilot</span>
+          <span className="text-xs font-bold tracking-wide text-[#F0F0F0]">Ask NEXUS Copilot</span>
         </button>
 
         {/* Slide-out Copilot Drawer */}
