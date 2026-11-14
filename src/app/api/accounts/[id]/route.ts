@@ -5,21 +5,19 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
-    const accountId = params.id;
-    if (!accountId) {
-      return NextResponse.json({ error: 'Missing account id' }, { status: 400 });
-    }
+    const rawId = context?.params?.id || req.nextUrl.pathname.split('/').pop() || 'A';
+    const accountId = rawId.toUpperCase();
 
     const accountRes = await db.execute({
-      sql: 'SELECT * FROM accounts WHERE id = ?',
+      sql: 'SELECT * FROM accounts WHERE UPPER(id) = ?',
       args: [accountId],
     });
 
     if (accountRes.rows.length === 0) {
-      return NextResponse.json({ error: 'Account not found' }, { status: 404 });
+      return NextResponse.json({ error: `Account with ID "${accountId}" not found` }, { status: 404 });
     }
 
     const account = accountRes.rows[0];
@@ -36,16 +34,16 @@ export async function GET(
       notesRes,
       dealContactsRes,
     ] = await Promise.all([
-      db.execute({ sql: 'SELECT * FROM contacts WHERE account_id = ?', args: [accountId] }),
-      db.execute({ sql: 'SELECT * FROM facts WHERE account_id = ?', args: [accountId] }),
-      db.execute({ sql: 'SELECT * FROM deals WHERE account_id = ?', args: [accountId] }),
-      db.execute({ sql: 'SELECT * FROM offers WHERE account_id = ?', args: [accountId] }),
-      db.execute({ sql: 'SELECT * FROM files WHERE account_id = ?', args: [accountId] }),
-      db.execute({ sql: 'SELECT * FROM actions WHERE account_id = ? ORDER BY priority ASC', args: [accountId] }),
-      db.execute({ sql: "SELECT * FROM risks WHERE account_id = ? ORDER BY CASE severity WHEN 'critical' THEN 1 WHEN 'high' THEN 2 ELSE 3 END", args: [accountId] }),
-      db.execute({ sql: 'SELECT * FROM unknowns WHERE account_id = ?', args: [accountId] }),
-      db.execute({ sql: 'SELECT * FROM notes WHERE account_id = ? ORDER BY created_at DESC', args: [accountId] }),
-      db.execute({ sql: 'SELECT * FROM deal_contacts WHERE account_id = ?', args: [accountId] }),
+      db.execute({ sql: 'SELECT * FROM contacts WHERE UPPER(account_id) = ?', args: [accountId] }),
+      db.execute({ sql: 'SELECT * FROM facts WHERE UPPER(account_id) = ?', args: [accountId] }),
+      db.execute({ sql: 'SELECT * FROM deals WHERE UPPER(account_id) = ?', args: [accountId] }),
+      db.execute({ sql: 'SELECT * FROM offers WHERE UPPER(account_id) = ?', args: [accountId] }),
+      db.execute({ sql: 'SELECT * FROM files WHERE UPPER(account_id) = ?', args: [accountId] }),
+      db.execute({ sql: 'SELECT * FROM actions WHERE UPPER(account_id) = ? ORDER BY priority ASC', args: [accountId] }),
+      db.execute({ sql: "SELECT * FROM risks WHERE UPPER(account_id) = ? ORDER BY CASE severity WHEN 'critical' THEN 1 WHEN 'high' THEN 2 ELSE 3 END", args: [accountId] }),
+      db.execute({ sql: 'SELECT * FROM unknowns WHERE UPPER(account_id) = ?', args: [accountId] }),
+      db.execute({ sql: 'SELECT * FROM notes WHERE UPPER(account_id) = ? ORDER BY created_at DESC', args: [accountId] }),
+      db.execute({ sql: 'SELECT * FROM deal_contacts WHERE UPPER(account_id) = ?', args: [accountId] }),
     ]);
 
     const deals = dealsRes.rows.map(d => ({

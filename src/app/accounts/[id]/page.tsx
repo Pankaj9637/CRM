@@ -36,6 +36,7 @@ export default function AccountDetailPage() {
 
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabKey>('overview');
 
   const [inspectFact, setInspectFact] = useState<FactData | null>(null);
@@ -46,11 +47,17 @@ export default function AccountDetailPage() {
   const fetchAccountDetail = async () => {
     try {
       setLoading(true);
+      setFetchError(null);
       const res = await fetch(`/api/accounts/${accountId}`);
       const json = await res.json();
-      setData(json);
-    } catch (err) {
+      if (!res.ok || json.error) {
+        setFetchError(json.error || `Server responded with status ${res.status}`);
+      } else {
+        setData(json);
+      }
+    } catch (err: any) {
       console.error('Failed to load account detail:', err);
+      setFetchError(err.message || 'Network request failed');
     } finally {
       setLoading(false);
     }
@@ -104,20 +111,30 @@ export default function AccountDetailPage() {
     );
   }
 
-  if (!data || !data.account) {
+  if (fetchError || !data || !data.account) {
     return (
-      <div className="p-8 text-center bg-[#242424] rounded-2xl border border-[#F43F5E]/40">
+      <div className="p-8 text-center bg-[#242424] rounded-2xl border border-[#F43F5E]/40 space-y-3">
         <AlertTriangle className="h-8 w-8 text-[#F43F5E] mx-auto mb-2" />
-        <h3 className="text-base font-bold text-[#F0F0F0]">Account Not Found</h3>
-        <p className="text-xs text-[#999999] mt-1">
-          Account ID &ldquo;{accountId}&rdquo; does not exist in the database.
+        <h3 className="text-base font-bold text-[#F0F0F0]">
+          {fetchError ? 'Error Loading Account Data' : 'Account Not Found'}
+        </h3>
+        <p className="text-xs text-[#999999]">
+          {fetchError || `Account ID "${accountId}" does not exist in the database.`}
         </p>
-        <Link
-          href="/accounts"
-          className="mt-4 inline-block px-4 py-2 text-xs font-semibold bg-[#D95B28] text-white rounded-xl shadow-md shadow-[#D95B28]/25"
-        >
-          Return to Accounts Portfolio
-        </Link>
+        <div className="flex items-center justify-center gap-3 pt-2">
+          <button
+            onClick={fetchAccountDetail}
+            className="px-4 py-2 text-xs font-semibold bg-[#2E2E2E] hover:bg-[#3D3D3D] text-[#F0F0F0] rounded-xl border border-[#3D3D3D] transition-colors"
+          >
+            Retry Request
+          </button>
+          <Link
+            href="/accounts"
+            className="inline-block px-4 py-2 text-xs font-semibold bg-[#D95B28] hover:bg-[#A33D14] text-white rounded-xl shadow-md shadow-[#D95B28]/25 transition-all"
+          >
+            Return to Accounts Portfolio
+          </Link>
+        </div>
       </div>
     );
   }
@@ -252,6 +269,8 @@ export default function AccountDetailPage() {
             offers={offers}
             contacts={contacts}
             risks={risks}
+            notes={data.notes || []}
+            onOpenNoteWriter={() => setIsNoteWriterOpen(true)}
           />
         )}
 

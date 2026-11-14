@@ -3,7 +3,7 @@
 import React from 'react';
 import { formatCurrency } from '@/lib/utils';
 import { Badge } from '@/components/badge';
-import { TrendingUp, Award, AlertTriangle, Users, FileText } from 'lucide-react';
+import { TrendingUp, Award, AlertTriangle, Users, FileText, PenLine, CheckCircle2, Clock } from 'lucide-react';
 
 interface OverviewTabProps {
   account: any;
@@ -11,9 +11,11 @@ interface OverviewTabProps {
   offers: any[];
   contacts: any[];
   risks: any[];
+  notes?: any[];
+  onOpenNoteWriter?: () => void;
 }
 
-export function OverviewTab({ account, deals, offers, contacts, risks }: OverviewTabProps) {
+export function OverviewTab({ account, deals, offers, contacts, risks, notes = [], onOpenNoteWriter }: OverviewTabProps) {
   const pipelineTotal = deals.reduce((sum, d) => sum + (Number(d.worth_up_to) || 0), 0);
   const wonOffersTotal = offers
     .filter((o) => o.status === 'won')
@@ -121,6 +123,61 @@ export function OverviewTab({ account, deals, offers, contacts, risks }: Overvie
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Field Intelligence & Notes (Live MCP Write-back) */}
+      <div className="bg-[#242424] rounded-2xl border border-[#3D3D3D] shadow-lg shadow-black/20 p-5 space-y-3">
+        <div className="flex items-center justify-between border-b border-[#3D3D3D] pb-3">
+          <div className="flex items-center gap-2">
+            <div className="h-6 w-6 rounded-lg bg-[#D95B28]/20 text-[#EC7D42] border border-[#D95B28]/40 flex items-center justify-center font-bold text-xs">
+              <PenLine className="h-3.5 w-3.5" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-[#F0F0F0]">Account Field Notes & Debriefs</h3>
+              <p className="text-[11px] text-[#999999]">Synchronized to local intelligence & live MCP server</p>
+            </div>
+          </div>
+          <button
+            onClick={onOpenNoteWriter}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-[#2E2E2E] hover:bg-[#3D3D3D] text-[#F0F0F0] border border-[#3D3D3D] rounded-xl transition-colors"
+          >
+            <PenLine className="h-3 w-3 text-[#D95B28]" />
+            <span>Add Note</span>
+          </button>
+        </div>
+
+        {notes.length === 0 ? (
+          <div className="py-6 text-center text-xs text-[#8A8A8A]">
+            No field notes logged for this account yet. Click &quot;Add Note&quot; to log intel.
+          </div>
+        ) : (
+          <div className="divide-y divide-[#3D3D3D]">
+            {notes.map((note) => (
+              <div key={note.id} className="py-3 space-y-1.5">
+                <div className="flex items-center justify-between text-[11px]">
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-[#8A8A8A] flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      {note.created_at}
+                    </span>
+                    {Boolean(note.synced_to_mcp) && (
+                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-[#3A7A65]/20 text-[#5eead4] border border-[#3A7A65]/40 text-[10px] font-medium">
+                        <CheckCircle2 className="h-2.5 w-2.5" />
+                        MCP Synced
+                      </span>
+                    )}
+                  </div>
+                  {note.title && (
+                    <span className="font-semibold text-[#F0F0F0]">{note.title}</span>
+                  )}
+                </div>
+                <p className="text-xs text-[#D6D6D6] leading-relaxed bg-[#1A1A1A] p-3 rounded-xl border border-[#3D3D3D]">
+                  {note.text}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

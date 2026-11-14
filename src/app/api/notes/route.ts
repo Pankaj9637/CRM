@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
       args: [targetAccount, kind, title, text],
     });
 
-    const noteId = insertRes.lastInsertRowid;
+    const noteId = insertRes.lastInsertRowid !== undefined ? Number(insertRes.lastInsertRowid) : null;
     let syncedToMcp = false;
 
     // Attempt MCP write_note
